@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/_header :: header-head(title='Analytics Dashboard')}"></head>
+<body>
+<nav th:replace="~{fragments/_header :: header-nav}"></nav>
+
+<div class="container py-4">
+    <!-- Header Section -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 fw-bold text-dark">Analytics & Insights</h1>
+            <p class="text-muted">Monitor student performance and course effectiveness</p>
+        </div>
+        <div class="d-flex gap-2">
+            <button class="btn btn-outline-primary btn-action" onclick="window.print()">
+                <i class="bi bi-printer"></i> Export Report
+            </button>
+            <a th:href="@{/teacher/dashboard}" class="btn btn-light btn-action">
+                <i class="bi bi-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- Overview Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card card-pro h-100">
+                <div class="card-body text-center p-4">
+                    <div class="metric-icon bg-primary bg-opacity-10 text-primary mb-3">
+                        <i class="bi bi-people fs-1"></i>
+                    </div>
+                    <h3 class="fw-bold mb-1" th:text="${totalStudents}">0</h3>
+                    <p class="text-muted mb-0 small">Total Students</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card card-pro h-100">
+                <div class="card-body text-center p-4">
+                    <div class="metric-icon bg-success bg-opacity-10 text-success mb-3">
+                        <i class="bi bi-clipboard-check fs-1"></i>
+                    </div>
+                    <h3 class="fw-bold mb-1" th:text="${totalQuizzesTaken}">0</h3>
+                    <p class="text-muted mb-0 small">Total Quizzes Taken</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card card-pro h-100">
+                <div class="card-body text-center p-4">
+                    <div class="metric-icon bg-warning bg-opacity-10 text-warning mb-3">
+                        <i class="bi bi-graph-up fs-1"></i>
+                    </div>
+                    <h3 class="fw-bold mb-1" th:text="${classAverageScore} + '%'">0%</h3>
+                    <p class="text-muted mb-0 small">Class Average</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card card-pro h-100">
+                <div class="card-body text-center p-4">
+                    <div class="metric-icon bg-info bg-opacity-10 text-info mb-3">
+                        <i class="bi bi-trophy fs-1"></i>
+                    </div>
+                    <h3 class="fw-bold mb-1" th:text="${overallPassRate} + '%'">0%</h3>
+                    <p class="text-muted mb-0 small">Overall Pass Rate</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row g-4 mb-4">
+        <!-- Class Performance Trend -->
+        <div class="col-lg-8">
+            <div class="card card-pro">
+                <div class="card-header-pro d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 fw-bold">Class Performance Trend</h5>
+                    <select class="form-select form-select-sm w-auto" id="timeRangeSelect">
+                        <option value="7">Last 7 Days</option>
+                        <option value="30" selected>Last 30 Days</option>
+                        <option value="90">Last 90 Days</option>
+                    </select>
+                </div>
+                <div class="card-body">
+                    <canvas id="classTrendChart" height="80"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Course Difficulty Analysis -->
+        <div class="col-lg-4">
+            <div class="card card-pro">
+                <div class="card-header-pro">
+                    <h5 class="mb-0 fw-bold">Course Pass Rates</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="coursePassRateChart" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Student Performance Rankings -->
+    <div class="row g-4 mb-4">
+        <div class="col-lg-6">
+            <div class="card card-pro">
+                <div class="card-header-pro bg-success bg-opacity-10">
+                    <h5 class="mb-0 fw-bold text-success">
+                        <i class="bi bi-star-fill me-2"></i>Top Performers
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div th:each="student, stat : ${topPerformers}" class="d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom">
+                        <div class="d-flex align-items-center">
+                            <div class="rank-badge" th:classappend="${stat.index == 0} ? 'rank-gold' : (${stat.index == 1} ? 'rank-silver' : 'rank-bronze')">
+                                <span th:text="${stat.count}">1</span>
+                            </div>
+                            <div class="ms-3">
+                                <p class="mb-0 fw-bold" th:text="${student.username}">Student Name</p>
+                                <small class="text-muted" th:text="${student.quizzesTaken} + ' quizzes taken'">5 quizzes</small>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <h5 class="mb-0 text-success fw-bold" th:text="${student.avgScore} + '%'">95%</h5>
+                            <a th:href="@{/teacher/student/{id}/progress(id=${student.id})}" class="btn btn-sm btn-link p-0 text-decoration-none">
+                                View Details →
+                            </a>
+                        </div>
+                    </div>
+                    <div th:if="${#lists.isEmpty(topPerformers)}" class="text-center py-3 text-muted">
+                        No quiz data available yet.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card card-pro">
+                <div class="card-header-pro bg-danger bg-opacity-10">
+                    <h5 class="mb-0 fw-bold text-danger">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>Students Needing Support
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div th:each="student : ${strugglingStudents}" class="d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom">
+                        <div class="d-flex align-items-center">
+                            <div class="bg-danger bg-opacity-10 rounded-circle p-2 text-danger">
+                                <i class="bi bi-person-fill"></i>
+                            </div>
+                            <div class="ms-3">
+                                <p class="mb-0 fw-bold" th:text="${student.username}">Student Name</p>
+                                <small class="text-muted" th:text="${student.quizzesTaken} + ' quizzes, ' + ${student.failureCount} + ' failed'">2 quizzes</small>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <h5 class="mb-0 text-danger fw-bold" th:text="${student.avgScore} + '%'">35%</h5>
+                            <a th:href="@{/teacher/student/{id}/progress(id=${student.id})}" class="btn btn-sm btn-outline-danger btn-action mt-1">
+                                Review
+                            </a>
+                        </div>
+                    </div>
+                    <div th:if="${#lists.isEmpty(strugglingStudents)}" class="text-center py-3 text-muted">
+                        All students performing well!
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Course Statistics Table -->
+    <div class="card card-pro">
+        <div class="card-header-pro">
+            <h5 class="mb-0 fw-bold">Course Performance Breakdown</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="ps-4 py-3">Course Name</th>
+                            <th>Students Enrolled</th>
+                            <th>Quizzes Taken</th>
+                            <th>Average Score</th>
+                            <th>Pass Rate</th>
+                            <th>Difficulty</th>
+                            <th class="pe-4">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="course : ${courseStats}">
+                            <td class="ps-4 fw-bold" th:text="${course.courseName}">Course Name</td>
+                            <td th:text="${course.studentsEnrolled}">25</td>
+                            <td th:text="${course.quizzesTaken}">45</td>
+                            <td>
+                                <span class="fw-bold" 
+                                      th:classappend="${course.avgScore >= 80} ? 'text-success' : (${course.avgScore >= 50} ? 'text-warning' : 'text-danger')"
+                                      th:text="${course.avgScore} + '%'">
+                                    75%
+                                </span>
+                            </td>
+                            <td th:text="${course.passRate} + '%'">80%</td>
+                            <td>
+                                <span th:if="${course.avgScore >= 80}" class="badge bg-success">Easy</span>
+                                <span th:if="${course.avgScore >= 50 && course.avgScore < 80}" class="badge bg-warning">Medium</span>
+                                <span th:if="${course.avgScore < 50}" class="badge bg-danger">Hard</span>
+                            </td>
+                            <td class="pe-4">
+                                <a th:href="@{/teacher/course/{id}/details(id=${course.courseId})}" class="btn btn-sm btn-outline-primary btn-action">
+                                    View Details
+                                </a>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(courseStats)}">
+                            <td colspan="7" class="text-center py-4 text-muted">
+                                No course data available yet.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="card card-pro mt-4">
+        <div class="card-header-pro">
+            <h5 class="mb-0 fw-bold">Recent Quiz Activity</h5>
+        </div>
+        <div class="card-body">
+            <div th:each="activity : ${recentActivity}" class="d-flex align-items-start mb-3 pb-3 border-bottom">
+                <div class="activity-icon" th:classappend="${activity.passed} ? 'bg-success' : 'bg-danger'">
+                    <i class="bi" th:classappend="${activity.passed} ? 'bi-check-circle-fill' : 'bi-x-circle-fill'"></i>
+                </div>
+                <div class="ms-3 flex-grow-1">
+                    <p class="mb-0">
+                        <strong th:text="${activity.studentName}">John Doe</strong> 
+                        <span th:if="${activity.passed}" class="text-success">passed</span>
+                        <span th:unless="${activity.passed}" class="text-danger">failed</span>
+                        <strong th:text="${activity.courseName}">Course Name</strong> 
+                        with <strong th:text="${activity.score} + '%'">85%</strong>
+                    </p>
+                    <small class="text-muted" th:text="${#temporals.format(activity.completedAt, 'MMM dd, yyyy HH:mm')}">Date</small>
+                </div>
+            </div>
+            <div th:if="${#lists.isEmpty(recentActivity)}" class="text-center py-3 text-muted">
+                No recent activity.
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/_footer :: footer}"></footer>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script th:inline="javascript">
+    // Class Performance Trend Chart
+    const trendData = /*[[${trendData}]]*/ [];
+    const trendLabels = trendData.map(d => d.date);
+    const trendScores = trendData.map(d => d.avgScore);
+    const trendQuizCount = trendData.map(d => d.quizCount);
+
+    const trendCtx = document.getElementById('classTrendChart');
+    if (trendCtx) {
+        new Chart(trendCtx, {
+            type: 'line',
+            data: {
+                labels: trendLabels,
+                datasets: [{
+                    label: 'Average Score',
+                    data: trendScores,
+                    borderColor: 'rgb(102, 126, 234)',
+                    backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                    tension: 0.4,
+                    fill: true,
+                    yAxisID: 'y'
+                }, {
+                    label: 'Quiz Count',
+                    data: trendQuizCount,
+                    borderColor: 'rgb(72, 187, 120)',
+                    backgroundColor: 'rgba(72, 187, 120, 0.1)',
+                    tension: 0.4,
+                    fill: true,
+                    yAxisID: 'y1'
+                }]
+            },
+            options: {
+                responsive: true,
+                interaction: {
+                    mode: 'index',
+                    intersect: false
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { padding: 15 }
+                    }
+                },
+                scales: {
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        beginAtZero: true,
+                        grid: {
+                            drawOnChartArea: false
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Course Pass Rate Chart
+    const passRateData = /*[[${coursePassRateData}]]*/ [];
+    const passRateLabels = passRateData.map(d => d.courseName);
+    const passRates = passRateData.map(d => d.passRate);
+
+    const passRateCtx = document.getElementById('coursePassRateChart');
+    if (passRateCtx) {
+        new Chart(passRateCtx, {
+            type: 'bar',
+            data: {
+                labels: passRateLabels,
+                datasets: [{
+                    label: 'Pass Rate',
+                    data: passRates,
+                    backgroundColor: passRates.map(rate => 
+                        rate >= 80 ? 'rgba(72, 187, 120, 0.8)' :
+                        rate >= 50 ? 'rgba(250, 112, 154, 0.8)' :
+                        'rgba(252, 129, 129, 0.8)'
+                    ),
+                    borderRadius: 8,
+                    barThickness: 30
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return 'Pass Rate: ' + context.parsed.x + '%';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+</script>
+
+<style>
+    .metric-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+    }
+
+    .text-info {
+        color: #4facfe !important;
+    }
+
+    .bg-info.bg-opacity-10 {
+        background: rgba(79, 172, 254, 0.1) !important;
+    }
+
+    .rank-badge {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 1.1rem;
+    }
+
+    .rank-gold {
+        background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+        color: #fff;
+        box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+    }
+
+    .rank-silver {
+        background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 100%);
+        color: #666;
+        box-shadow: 0 4px 15px rgba(192, 192, 192, 0.4);
+    }
+
+    .rank-bronze {
+        background: linear-gradient(135deg, #cd7f32 0%, #e6a857 100%);
+        color: #fff;
+        box-shadow: 0 4px 15px rgba(205, 127, 50, 0.4);
+    }
+
+    .activity-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .activity-icon.bg-success {
+        background: rgba(72, 187, 120, 0.1) !important;
+        color: #48bb78;
+    }
+
+    .activity-icon.bg-danger {
+        background: rgba(252, 129, 129, 0.1) !important;
+        color: #fc8181;
+    }
+
+    @media print {
+        .btn, nav, footer {
+            display: none !important;
+        }
+    }
+</style>
+
+</body>
+</html>

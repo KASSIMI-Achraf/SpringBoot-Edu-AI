@@ -19,13 +19,18 @@ public class Course {
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    // --- NEW PDF FIELDS ---
-    @Lob // Tells DB this is a large object
-    @Column(length = 10000000) // Increase size limit for MySQL/H2
+    // --- PDF FIELDS ---
+    @Lob
+    @Column(length = 10000000)
     private byte[] pdfFile;
 
     private String pdfFilename;
     // ----------------------
+
+    // Teacher who owns this course
+    @ManyToOne
+    @JoinColumn(name = "teacher_id")
+    private AppUser teacher;
 
     @ManyToMany
     @JoinTable(
@@ -53,6 +58,9 @@ public class Course {
 
     public String getPdfFilename() { return pdfFilename; }
     public void setPdfFilename(String pdfFilename) { this.pdfFilename = pdfFilename; }
+
+    public AppUser getTeacher() { return teacher; }
+    public void setTeacher(AppUser teacher) { this.teacher = teacher; }
 
     public List<AppUser> getStudents() { return students; }
     public void setStudents(List<AppUser> students) { this.students = students; }

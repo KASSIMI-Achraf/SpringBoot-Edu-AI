@@ -1,666 +1,154 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head th:fragment="header-head(title)">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${title} ?: 'PedagogyAI Admin'"></title>
-    
+    <title th:text="${title} ?: 'PedagogyAI'"></title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    
-    <style>
-        :root {
-            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --primary-color: #667eea;
-            --primary-dark: #5568d3;
-            --accent-color: #764ba2;
-            --bg-main: #f8f9fe;
-            --card-bg: #ffffff;
-            --border-color: #e3e8ef;
-            --text-primary: #2d3748;
-            --text-secondary: #718096;
-            --text-muted: #a0aec0;
-            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.04);
-            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
-            --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.12);
-            --transition-fast: all 0.2s ease;
-            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
 
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg-main);
-            color: var(--text-primary);
-            padding-top: 80px;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        /* NAVBAR */
-        .navbar-pro {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border-color);
-            box-shadow: var(--shadow-sm);
-            padding: 1rem 0;
-            transition: var(--transition-smooth);
-        }
-
-        .navbar-brand {
-            font-size: 1.5rem;
-            font-weight: 700;
-            background: var(--primary-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            transition: var(--transition-fast);
-        }
-
-        .navbar-brand:hover {
-            transform: translateY(-2px);
-            opacity: 0.8;
-        }
-
-        .navbar-brand i {
-            -webkit-text-fill-color: var(--primary-color);
-        }
-
-        .nav-link {
-            color: var(--text-secondary);
-            font-weight: 500;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            transition: var(--transition-fast);
-            position: relative;
-        }
-
-        .nav-link:hover {
-            color: var(--primary-color);
-            background: rgba(102, 126, 234, 0.08);
-        }
-
-        /* CARDS */
-        .card-pro {
-            background: var(--card-bg);
-            border: none;
-            border-radius: 16px;
-            box-shadow: var(--shadow-md);
-            overflow: hidden;
-            transition: var(--transition-smooth);
-        }
-
-        .card-pro:hover {
-            box-shadow: var(--shadow-lg);
-            transform: translateY(-4px);
-        }
-
-        .card-header-pro {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
-            border-bottom: 2px solid var(--border-color);
-            padding: 1.5rem;
-            font-weight: 600;
-        }
-
-        /* BUTTONS */
-        .btn-action {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.625rem 1.25rem;
-            border-radius: 10px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            transition: var(--transition-smooth);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-primary.btn-action {
-            background: var(--primary-gradient);
-            border: none;
-            color: white;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-        }
-
-        .btn-primary.btn-action:hover {
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-            transform: translateY(-2px);
-        }
-
-        .btn-success.btn-action {
-            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-            border: none;
-            color: white;
-            box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3);
-        }
-
-        .btn-success.btn-action:hover {
-            transform: translateY(-2px);
-        }
-
-        .btn-warning.btn-action {
-            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-            border: none;
-            color: white;
-            box-shadow: 0 4px 15px rgba(250, 112, 154, 0.3);
-        }
-
-        .btn-outline-primary.btn-action {
-            border: 2px solid var(--primary-color);
-            color: var(--primary-color);
-            background: transparent;
-        }
-
-        .btn-outline-primary.btn-action:hover {
-            background: var(--primary-gradient);
-            color: white;
-            border-color: transparent;
-        }
-
-        .btn-outline-secondary.btn-action {
-            border: 2px solid var(--border-color);
-            color: var(--text-secondary);
-            background: transparent;
-        }
-
-        .btn-outline-secondary.btn-action:hover {
-            background: var(--text-secondary);
-            color: white;
-            border-color: var(--text-secondary);
-        }
-
-        .btn-outline-danger.btn-action {
-            border: 2px solid #fc8181;
-            color: #e53e3e;
-            background: transparent;
-        }
-
-        .btn-outline-danger.btn-action:hover {
-            background: linear-gradient(135deg, #fc8181 0%, #e53e3e 100%);
-            color: white;
-            border-color: transparent;
-        }
-
-        .btn-outline-dark.btn-action {
-            border: 2px solid var(--text-primary);
-            color: var(--text-primary);
-            background: transparent;
-        }
-
-        .btn-outline-dark.btn-action:hover {
-            background: var(--text-primary);
-            color: white;
-        }
-
-        .btn-light.btn-action {
-            background: var(--bg-main);
-            border: 2px solid var(--border-color);
-            color: var(--text-secondary);
-        }
-
-        .btn-light.btn-action:hover {
-            background: white;
-            border-color: var(--primary-color);
-            color: var(--primary-color);
-        }
-
-        /* FORMS */
-        .form-control, .form-select {
-            border: 2px solid var(--border-color);
-            border-radius: 10px;
-            padding: 0.75rem 1rem;
-            font-size: 0.95rem;
-            transition: var(--transition-fast);
-            background: white;
-        }
-
-        .form-control:focus, .form-select:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
-            outline: none;
-        }
-
-        .form-label {
-            color: var(--text-primary);
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        /* TABLES */
-        .table thead th {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
-            color: var(--text-primary);
-            font-weight: 700;
-            text-transform: uppercase;
-            font-size: 0.75rem;
-            letter-spacing: 0.5px;
-            border: none;
-            padding: 1rem 1.5rem;
-        }
-
-        .table tbody tr {
-            transition: var(--transition-fast);
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .table tbody tr:hover {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.03) 0%, rgba(118, 75, 162, 0.03) 100%);
-        }
-
-        .table td {
-            padding: 1.25rem 1.5rem;
-            vertical-align: middle;
-            border: none;
-        }
-
-        /* BADGES */
-        .badge {
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 0.75rem;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-        }
-
-        .badge.bg-success {
-            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%) !important;
-        }
-
-        .badge.bg-danger {
-            background: linear-gradient(135deg, #fc8181 0%, #e53e3e 100%) !important;
-        }
-
-        .badge.bg-secondary {
-            background: linear-gradient(135deg, #718096 0%, #4a5568 100%) !important;
-        }
-
-        /* INPUT GROUPS */
-        .input-group-text {
-            background: var(--primary-gradient);
-            color: white;
-            border: none;
-            font-weight: 700;
-            min-width: 45px;
-            justify-content: center;
-            border-radius: 10px 0 0 10px;
-        }
-
-        .input-group .form-control {
-            border-left: none;
-            border-radius: 0 10px 10px 0;
-        }
-
-        /* SPECIAL BACKGROUNDS */
-        .bg-light.rounded {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%) !important;
-            border: 2px solid rgba(102, 126, 234, 0.2);
-        }
-
-        .bg-success.bg-opacity-10 {
-            background: linear-gradient(135deg, rgba(72, 187, 120, 0.1) 0%, rgba(56, 161, 105, 0.1) 100%) !important;
-        }
-
-        .border-success {
-            border: 2px solid #48bb78 !important;
-        }
-
-        .bg-warning.bg-opacity-10 {
-            background: linear-gradient(135deg, rgba(250, 112, 154, 0.1) 0%, rgba(254, 225, 64, 0.1) 100%) !important;
-        }
-
-        .bg-light.rounded-circle {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%) !important;
-            border: 3px solid rgba(102, 126, 234, 0.2);
-        }
-
-        /* UTILITIES */
-        .text-primary {
-            color: var(--primary-color) !important;
-        }
-
-        h1, h2, h3, h4, h5, h6 {
-            color: var(--text-primary);
-            font-weight: 700;
-        }
-
-        a.btn-link {
-            color: var(--primary-color);
-            font-weight: 600;
-        }
-
-        /* ANIMATIONS */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .card-pro {
-            animation: fadeInUp 0.5s ease-out;
-        }
-
-        /* SCROLLBAR */
-        ::-webkit-scrollbar {
-            width: 10px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: var(--bg-main);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--primary-gradient);
-            border-radius: 10px;
-        }
-
-        /* STUDENT SIDE - COURSE CARDS */
-        .course-card {
-            border: none;
-            border-radius: 16px;
-            transition: var(--transition-smooth);
-            background: white;
-            overflow: hidden;
-        }
-
-        .course-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.2) !important;
-        }
-
-        .course-card .bg-primary.bg-opacity-10 {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%) !important;
-        }
-
-        .course-card .card-title {
-            color: var(--text-primary);
-            font-size: 1.25rem;
-            margin-bottom: 0.75rem;
-        }
-
-        /* QUIZ LANDING - MODE CARDS */
-        .card.border-primary {
-            transition: var(--transition-smooth);
-        }
-
-        .card.border-primary:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.25) !important;
-        }
-
-        .card.border-success:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 15px 40px rgba(72, 187, 120, 0.25) !important;
-        }
-
-        /* QUIZ VIEW - GLASS CARD */
-        .glass-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-        }
-
-        /* QUIZ OPTIONS */
-        .quiz-option-label {
-            display: block;
-            padding: 1.25rem 1.5rem;
-            background: white;
-            border: 2px solid var(--border-color);
-            border-radius: 12px;
-            cursor: pointer;
-            transition: var(--transition-smooth);
-            margin-bottom: 0;
-        }
-
-        .quiz-option-label:hover {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
-            border-color: var(--primary-color);
-            transform: translateX(8px);
-        }
-
-        .form-check-input:checked + .quiz-option-label {
-            background: var(--primary-gradient);
-            color: white;
-            border-color: transparent;
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
-        }
-
-        .form-check-input:checked + .quiz-option-label .text-primary {
-            color: white !important;
-        }
-
-        .form-check-input {
-            display: none;
-        }
-
-        /* RESULT CARDS */
-        .result-card.correct {
-            border-left: 4px solid #48bb78;
-            background: linear-gradient(135deg, rgba(72, 187, 120, 0.05) 0%, rgba(56, 161, 105, 0.05) 100%);
-        }
-
-        .result-card.incorrect {
-            border-left: 4px solid #fc8181;
-            background: linear-gradient(135deg, rgba(252, 129, 129, 0.05) 0%, rgba(229, 62, 62, 0.05) 100%);
-        }
-
-        .result-card {
-            transition: var(--transition-smooth);
-        }
-
-        .result-card:hover {
-            transform: translateX(8px);
-        }
-
-        /* STICKY SUBMIT BUTTON */
-        .sticky-bottom {
-            position: sticky;
-            bottom: 0;
-            z-index: 100;
-            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1) !important;
-        }
-
-        .rounded-top-4 {
-            border-radius: 16px 16px 0 0 !important;
-        }
-
-        /* ROUNDED PILLS */
-        .rounded-pill {
-            border-radius: 50px !important;
-        }
-
-        .badge.rounded-pill {
-            font-size: 0.85rem;
-            padding: 0.5rem 1.25rem;
-        }
-
-        /* PASSWORD CHANGE PAGE */
-        .vh-100 {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        body.bg-light {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-        }
-
-        /* ALERT STYLES */
-        .alert {
-            border: none;
-            border-radius: 12px;
-            padding: 1rem 1.25rem;
-            font-weight: 500;
-        }
-
-        .alert-danger {
-            background: linear-gradient(135deg, rgba(252, 129, 129, 0.15) 0%, rgba(229, 62, 62, 0.15) 100%);
-            color: #c53030;
-            border-left: 4px solid #fc8181;
-        }
-
-        /* DISPLAY UTILITIES */
-        .display-4 {
-            font-size: 3.5rem;
-            font-weight: 700;
-        }
-
-        .lead {
-            font-size: 1.15rem;
-            font-weight: 400;
-        }
-
-        /* ICON SIZING */
-        .fs-1 {
-            font-size: 3rem !important;
-        }
-
-        .fs-3 {
-            font-size: 2rem !important;
-        }
-
-        .display-4.bi {
-            font-size: 4rem !important;
-        }
-
-        /* BUTTON SIZING */
-        .btn-lg {
-            padding: 0.875rem 1.75rem;
-            font-size: 1.1rem;
-        }
-
-        /* ENHANCE PRIMARY BUTTON ON STUDENT SIDE */
-        .btn-primary:not(.btn-action) {
-            background: var(--primary-gradient);
-            border: none;
-            font-weight: 600;
-            transition: var(--transition-smooth);
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-        }
-
-        .btn-primary:not(.btn-action):hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-success:not(.btn-action) {
-            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-            border: none;
-            font-weight: 600;
-            box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3);
-        }
-
-        .btn-success:not(.btn-action):hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(72, 187, 120, 0.4);
-        }
-
-        /* CARD ENHANCEMENTS */
-        .card.shadow, .card.shadow-lg {
-            border: none;
-            border-radius: 16px;
-        }
-
-        .card.shadow-lg {
-            box-shadow: var(--shadow-xl) !important;
-        }
-
-        /* TEXT UTILITIES */
-        .text-success {
-            color: #48bb78 !important;
-        }
-
-        .text-danger {
-            color: #fc8181 !important;
-        }
-
-        .text-secondary {
-            color: var(--text-secondary) !important;
-        }
-    </style>
+    <!-- Professional Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+
+    <!-- UI Interactions Script -->
+    <script th:src="@{/js/ui-interactions.js}" defer></script>
 </head>
+
 <body>
 
-<!-- ADMIN NAVIGATION -->
-<nav th:fragment="header-nav" class="navbar navbar-expand-lg navbar-pro fixed-top">
-    <div class="container">
-        <a class="navbar-brand fw-bold text-primary" href="#">
-            <i class="bi bi-mortarboard-fill me-2"></i>PedagogyAI
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto gap-2">
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/admin/dashboard}">Dashboard</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/admin/analytics}">Analytics</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/admin/students}">Students</a>
-                </li>
-                <li class="nav-item border-start mx-2 d-none d-lg-block"></li>
-                <li class="nav-item">
-                    <a class="btn btn-sm btn-outline-secondary btn-action" th:href="@{/logout}">
-                        <i class="bi bi-box-arrow-right"></i> Log Out
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
+    <!-- ADMIN NAVIGATION -->
+    <nav th:fragment="header-nav-admin" class="navbar navbar-expand-lg navbar-pro fixed-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-primary" th:href="@{/admin/dashboard}">
+                <i class="bi bi-mortarboard-fill me-2"></i>PedagogyAI
+                <span class="badge bg-danger ms-2" style="font-size: 0.6rem;">ADMIN</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-<!-- STUDENT NAVIGATION -->
-<nav th:fragment="header-nav-student" class="navbar navbar-expand-lg navbar-pro fixed-top">
-    <div class="container">
-        <a class="navbar-brand fw-bold text-primary" th:href="@{/courses}">
-            <i class="bi bi-mortarboard-fill me-2"></i>PedagogyAI
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto gap-2">
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/courses}">
-                        <i class="bi bi-book"></i> My Courses
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/student/analytics}">
-                        <i class="bi bi-graph-up"></i> Analytics
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/student/change-password}">
-                        <i class="bi bi-key"></i> Change Password
-                    </a>
-                </li>
-                <li class="nav-item border-start mx-2 d-none d-lg-block"></li>
-                <li class="nav-item">
-                    <a class="btn btn-sm btn-outline-secondary btn-action" th:href="@{/logout}">
-                        <i class="bi bi-box-arrow-right"></i> Log Out
-                    </a>
-                </li>
-            </ul>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto gap-2">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/admin/dashboard}">
+                            <i class="bi bi-speedometer2"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/admin/teachers}">
+                            <i class="bi bi-person-workspace"></i> Teachers
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/admin/courses}">
+                            <i class="bi bi-book"></i> Courses
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/admin/analytics}">
+                            <i class="bi bi-graph-up"></i> Analytics
+                        </a>
+                    </li>
+                    <li class="nav-item border-start mx-2 d-none d-lg-block"></li>
+                    <li class="nav-item">
+                        <a class="btn btn-sm btn-outline-secondary btn-action" th:href="@{/logout}">
+                            <i class="bi bi-box-arrow-right"></i> Log Out
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </div>
-    </div>
-</nav>
+    </nav>
+
+    <!-- TEACHER NAVIGATION (Shared Logic) -->
+    <th:block th:fragment="header-nav">
+        <!-- If User is Admin, show Admin Nav -->
+        <nav th:if="${#authorization.expression('hasAuthority(''ADMIN'')')}"
+            th:replace="~{fragments/_header :: header-nav-admin}"></nav>
+        <!-- Else, show Teacher Nav -->
+        <nav th:unless="${#authorization.expression('hasAuthority(''ADMIN'')')}"
+            th:replace="~{fragments/_header :: header-nav-teacher}"></nav>
+    </th:block>
+
+    <!-- ACTUAL TEACHER NAVIGATION FRAGMENT -->
+    <nav th:fragment="header-nav-teacher" class="navbar navbar-expand-lg navbar-pro fixed-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-primary" th:href="@{/teacher/dashboard}">
+                <i class="bi bi-mortarboard-fill me-2"></i>PedagogyAI
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto gap-2">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/teacher/dashboard}">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/teacher/analytics}">Analytics</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/teacher/students}">Students</a>
+                    </li>
+                    <li class="nav-item border-start mx-2 d-none d-lg-block"></li>
+                    <li class="nav-item">
+                        <a class="btn btn-sm btn-outline-secondary btn-action" th:href="@{/logout}">
+                            <i class="bi bi-box-arrow-right"></i> Log Out
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- STUDENT NAVIGATION -->
+    <nav th:fragment="header-nav-student" class="navbar navbar-expand-lg navbar-pro fixed-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-primary" th:href="@{/courses}">
+                <i class="bi bi-mortarboard-fill me-2"></i>PedagogyAI
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto gap-2">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/courses}">
+                            <i class="bi bi-book"></i> My Courses
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/student/analytics}">
+                            <i class="bi bi-graph-up"></i> Analytics
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/student/change-password}">
+                            <i class="bi bi-key"></i> Change Password
+                        </a>
+                    </li>
+                    <li class="nav-item border-start mx-2 d-none d-lg-block"></li>
+                    <li class="nav-item">
+                        <a class="btn btn-sm btn-outline-secondary btn-action" th:href="@{/logout}">
+                            <i class="bi bi-box-arrow-right"></i> Log Out
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
 </body>
+
 </html>

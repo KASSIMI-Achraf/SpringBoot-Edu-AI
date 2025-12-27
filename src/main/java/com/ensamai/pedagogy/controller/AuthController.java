@@ -15,12 +15,16 @@ public class AuthController {
     @GetMapping("/")
     public String root(Authentication authentication) {
         if (authentication != null) {
-            // Check authorities for "ADMIN"
+            // Check authorities - order matters: most privileged first
             boolean isAdmin = authentication.getAuthorities().stream()
                     .anyMatch(a -> a.getAuthority().equals("ADMIN"));
+            boolean isTeacher = authentication.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().equals("TEACHER"));
 
             if (isAdmin) {
                 return "redirect:/admin/dashboard";
+            } else if (isTeacher) {
+                return "redirect:/teacher/dashboard";
             } else {
                 return "redirect:/courses"; // Students go here
             }

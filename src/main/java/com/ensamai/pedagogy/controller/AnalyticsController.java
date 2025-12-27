@@ -6,6 +6,7 @@ import com.ensamai.pedagogy.model.QuizResult;
 import com.ensamai.pedagogy.repository.AppUserRepository;
 import com.ensamai.pedagogy.service.AnalyticsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -54,11 +55,12 @@ public class AnalyticsController {
     }
     
     // =====================================
-    // ADMIN ANALYTICS
+    // TEACHER/ADMIN ANALYTICS
     // =====================================
     
-    @GetMapping("/admin/analytics")
-    public String adminAnalytics(
+    @GetMapping("/teacher/analytics")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'TEACHER')")
+    public String teacherAnalytics(
             @RequestParam(defaultValue = "30") int days,
             Model model) {
         
@@ -83,7 +85,7 @@ public class AnalyticsController {
         model.addAttribute("coursePassRateData", coursePassRateData);
         model.addAttribute("recentActivity", recentActivity);
         
-        return "admin/admin_analytics";
+        return "teacher/analytics";
     }
     
     private Long getCurrentStudentId(Authentication auth) {

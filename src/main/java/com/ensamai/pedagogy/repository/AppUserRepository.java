@@ -8,8 +8,21 @@ import java.util.Optional;
 
 public interface AppUserRepository extends JpaRepository<AppUser, Long> {
     Optional<AppUser> findByUsername(String username);
+    Optional<AppUser> findByEmail(String email);
     
-    // New method to list students for the dropdown menu
+    // Find users by role
     List<AppUser> findByRole(Role role);
     long countByRole(Role role);
+    
+    // Check if an admin exists
+    boolean existsByRole(Role role);
+    
+    // Find active users by role
+    List<AppUser> findByRoleAndActive(Role role, boolean active);
+    
+    // Find non-deletable user (the admin)
+    Optional<AppUser> findByRoleAndIsDeletable(Role role, boolean isDeletable);
+    
+    // Count active users by role
+    long countByRoleAndActive(Role role, boolean active);
 }

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/_header :: header-head(title='Teacher Details')}"></head>
+
+<body>
+    <nav th:replace="~{fragments/_header :: header-nav-admin}"></nav>
+
+    <div class="container py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <a th:href="@{/admin/teachers}" class="btn btn-link text-decoration-none ps-0 mb-2 text-muted">
+                    <i class="bi bi-arrow-left"></i> Back to Teachers
+                </a>
+                <h1 class="h3 fw-bold text-dark" th:text="${teacher.fullName ?: teacher.username}">Teacher Name</h1>
+                <p class="text-muted" th:text="'@' + ${teacher.username}">@username</p>
+            </div>
+            <div class="d-flex gap-2">
+                <a th:href="@{/admin/teachers/{id}/edit(id=${teacher.id})}" class="btn btn-outline-primary btn-action">
+                    <i class="bi bi-pencil"></i> Edit
+                </a>
+            </div>
+        </div>
+
+        <!-- Teacher Info Card -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-6">
+                <div class="card card-pro h-100">
+                    <div class="card-header-pro">
+                        <h5 class="mb-0 fw-bold">Account Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-borderless mb-0">
+                            <tr>
+                                <td class="text-muted">Email</td>
+                                <td class="fw-bold" th:text="${teacher.email}">email@example.com</td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted">Status</td>
+                                <td>
+                                    <span th:if="${teacher.active}" class="badge bg-success">Active</span>
+                                    <span th:unless="${teacher.active}" class="badge bg-danger">Inactive</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted">Created</td>
+                                <td th:text="${#temporals.format(teacher.createdAt, 'MMM dd, yyyy HH:mm')}">Date</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card card-pro h-100">
+                    <div class="card-header-pro">
+                        <h5 class="mb-0 fw-bold">Statistics</h5>
+                    </div>
+                    <div class="card-body text-center">
+                        <h2 class="fw-bold text-primary" th:text="${courses.size()}">0</h2>
+                        <p class="text-muted mb-0">Courses Created</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Courses List -->
+        <div class="card card-pro">
+            <div class="card-header-pro">
+                <h5 class="mb-0 fw-bold">Courses</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="ps-4 py-3">Course Name</th>
+                                <th>Students Enrolled</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="course : ${courses}">
+                                <td class="ps-4">
+                                    <span class="fw-bold" th:text="${course.title}">Course Title</span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-dark border"
+                                        th:text="${course.students.size()} + ' students'">0 students</span>
+                                </td>
+                            </tr>
+                            <tr th:if="${courses.empty}">
+                                <td colspan="2" class="text-center py-4 text-muted">
+                                    This teacher has no courses yet.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments/_footer :: footer}"></footer>
+</body>
+
+</html>

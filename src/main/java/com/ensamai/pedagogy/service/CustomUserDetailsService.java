@@ -22,7 +22,12 @@ public class CustomUserDetailsService implements UserDetailsService {
         AppUser appUser = appUserRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
 
-        // Returns the user with the authority (e.g., "ADMIN")
+        // Check if account is active
+        if (!appUser.isActive()) {
+            throw new UsernameNotFoundException("Account is deactivated: " + username);
+        }
+
+        // Returns the user with the authority (ADMIN, TEACHER, or STUDENT)
         return User.builder()
                 .username(appUser.getUsername())
                 .password(appUser.getPassword())

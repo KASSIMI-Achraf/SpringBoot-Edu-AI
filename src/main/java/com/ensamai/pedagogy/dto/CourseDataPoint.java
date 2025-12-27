@@ -17,4 +17,7 @@ public class CourseDataPoint {
     
     public double getAvgScore() { return avgScore; }
     public void setAvgScore(double avgScore) { this.avgScore = avgScore; }
+    
+    // Alias for chart compatibility - the JavaScript expects passRate
+    public double getPassRate() { return avgScore; }
 }
