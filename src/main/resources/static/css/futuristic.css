@@ -1,0 +1,65 @@
+:root {
+    --bg-body: #0f172a;       /* Deep Slate */
+    --bg-card: #1e293b;       /* Lighter Slate */
+    --text-main: #f1f5f9;     /* Off-white */
+    --text-muted: #94a3b8;    /* Cool Gray */
+    --primary-glow: #3b82f6;  /* Electric Blue */
+    --accent-glow: #8b5cf6;   /* Neon Purple */
+}
+
+body {
+    background-color: var(--bg-body);
+    color: var(--text-main);
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    min-height: 100vh;
+}
+
+/* Glassmorphism Card Style */
+.card-glass {
+    background: rgba(30, 41, 59, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    border-radius: 12px;
+}
+
+/* Headings & Text */
+h1, h2, h3, h4, h5 { font-weight: 700; letter-spacing: -0.5px; }
+.text-glow { text-shadow: 0 0 10px rgba(59, 130, 246, 0.5); }
+
+/* Form Controls */
+.form-control, .form-select {
+    background-color: #0f172a;
+    border: 1px solid #334155;
+    color: #e2e8f0;
+}
+.form-control:focus, .form-select:focus {
+    background-color: #0f172a;
+    border-color: var(--primary-glow);
+    color: #fff;
+    box-shadow: 0 0 0 0.25rem rgba(59, 130, 246, 0.25);
+}
+
+/* Tables */
+.table-dark-glass {
+    --bs-table-bg: transparent;
+    --bs-table-color: var(--text-main);
+    border-color: #334155;
+}
+.table-dark-glass th { background-color: rgba(15, 23, 42, 0.8); color: var(--text-muted); text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px;}
+.table-dark-glass td { vertical-align: middle; }
+
+/* Buttons with Gradients */
+.btn-neon {
+    background: linear-gradient(135deg, var(--primary-glow), var(--accent-glow));
+    border: none;
+    color: white;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+.btn-neon:hover {
+    filter: brightness(1.2);
+    box-shadow: 0 0 15px rgba(139, 92, 246, 0.5);
+    color: white;
+}

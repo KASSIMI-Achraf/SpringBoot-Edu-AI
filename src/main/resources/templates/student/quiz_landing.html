@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/_header :: header-head(title='Start Quiz')}"></head>
+<body class="bg-light">
+<nav th:replace="~{fragments/_header :: header-nav-student}"></nav>
+
+<div class="container" style="max-width: 800px;">
+    <div class="card shadow-lg border-0">
+        <div class="card-body p-5 text-center">
+            
+            <h1 class="mb-3 fw-bold" th:text="${course.title}">Course Title</h1>
+            <p class="text-muted mb-5 lead">Choose your assessment mode below.</p>
+
+            <div class="row g-4 justify-content-center">
+                
+                <div class="col-md-6">
+                    <div class="card h-100 border-primary shadow-sm" style="border-width: 2px;">
+                        <div class="card-body py-5">
+                            <i class="bi bi-mortarboard-fill display-4 text-primary mb-3"></i>
+                            <h3 class="card-title fw-bold">Official Exam</h3>
+                            <p class="card-text text-muted mb-4">
+                                Take the standard exam created by your instructor. 
+                                Grades are recorded.
+                            </p>
+                            
+                            <a th:if="${hasOfficialQuiz}" 
+                               th:href="@{/quiz/{id}/take(id=${course.id}, type='official')}" 
+                               class="btn btn-primary btn-lg w-100 fw-bold">
+                                Start Exam
+                            </a>
+                            
+                            <button th:unless="${hasOfficialQuiz}" 
+                                    class="btn btn-secondary btn-lg w-100 fw-bold" disabled>
+                                Not Available
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card h-100 border-success shadow-sm" style="border-width: 2px;">
+                        <div class="card-body py-5">
+                            <i class="bi bi-robot display-4 text-success mb-3"></i>
+                            <h3 class="card-title fw-bold">AI Practice</h3>
+                            <p class="card-text text-muted mb-4">
+                                Generate a unique practice quiz instantly using Gemini AI 
+                                based on course material.
+                            </p>
+                            
+                            <a th:href="@{/quiz/{id}/take(id=${course.id}, type='ai')}" 
+                               class="btn btn-success btn-lg w-100 fw-bold">
+                                Generate & Start
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/_footer :: footer}"></footer>
+
+</body>
+</html>

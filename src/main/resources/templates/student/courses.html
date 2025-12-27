@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/_header :: header-head(title='My Courses')}"></head>
+<body>
+<nav th:replace="~{fragments/_header :: header-nav-student}"></nav>
+
+<div class="container">
+    <div class="mb-4">
+        <h2 class="fw-bold">My Learning Path</h2>
+        <p class="text-secondary">Select a course to start your AI-powered assessment.</p>
+    </div>
+
+    <div class="row g-4">
+        <div th:each="course : ${courses}" class="col-md-6 col-lg-4">
+            <div class="card course-card h-100 shadow-sm">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between mb-3">
+                        <div class="bg-primary bg-opacity-10 p-2 rounded-3 text-primary">
+                            <i class="bi bi-book fs-3"></i>
+                        </div>
+                        <span class="badge bg-light text-dark align-self-start border">Active</span>
+                    </div>
+                    <h5 class="card-title fw-bold" th:text="${course.title}">Course Title</h5>
+                    <p class="card-text text-muted small" th:text="${course.description}">Description...</p>
+                </div>
+                <div class="card-footer bg-transparent border-0 p-4 pt-0">
+                    <a th:href="@{/quiz/{id}(id=${course.id})}" class="btn btn-primary w-100 rounded-pill fw-bold">
+                        Start Learning <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div th:if="${courses.empty}" class="col-12 text-center py-5">
+            <i class="bi bi-emoji-smile fs-1 text-muted mb-3"></i>
+            <h4 class="text-muted">No courses assigned to you yet.</h4>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/_footer :: footer}"></footer>
+
+</body>
+</html>
