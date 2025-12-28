@@ -1,6 +1,6 @@
 package com.ensamai.pedagogy.controller;
 
-import com.ensamai.pedagogy.dto.QuizQuestion; // Import your DTO
+import com.ensamai.pedagogy.dto.QuizQuestion; 
 import com.ensamai.pedagogy.model.*;
 import com.ensamai.pedagogy.repository.*;
 import com.ensamai.pedagogy.service.AiAgentService;
@@ -65,7 +65,6 @@ public class QuizController {
         if ("official".equals(type)) {
             questions = questionRepository.findByCourseId(courseId);
         } else {
-            // --- AI LOGIC USING YOUR DTO ---
             String jsonQuiz = aiAgentService.generateQuiz(student.getId(), courseId);
             System.out.println("RAW AI RESPONSE: " + jsonQuiz);
 
@@ -76,10 +75,8 @@ public class QuizController {
                 if (startIndex != -1 && endIndex != -1) {
                     String cleanJson = jsonQuiz.substring(startIndex, endIndex + 1);
 
-                    // 1. USE YOUR DTO HERE
                     List<QuizQuestion> dtos = objectMapper.readValue(cleanJson, new TypeReference<List<QuizQuestion>>(){});
 
-                    // 2. Convert DTO -> Entity (for HTML compatibility)
                     for (QuizQuestion dto : dtos) {
                         Question q = new Question();
                         q.setQuestionText(dto.getQuestionText());
@@ -111,7 +108,6 @@ public class QuizController {
         return opt.replaceAll("^[A-D]\\.\\s*", ""); 
     }
 
-    // Submit Logic (Unchanged)
     @PostMapping("/submit")
     public String submitQuiz(@RequestParam Long courseId, 
                              @RequestParam Map<String, String> allParams,
@@ -146,7 +142,7 @@ public class QuizController {
         }
 
         int finalScore = totalQuestions > 0 ? (int) (((double) correctCount / totalQuestions) * 100) : 0;
-        quizResultRepository.save(new QuizResult(student, course, finalScore));
+        quizResultRepository.save(new QuizResult(student, course, finalScore, correctCount, totalQuestions));
 
         model.addAttribute("score", finalScore);
         model.addAttribute("total", totalQuestions);

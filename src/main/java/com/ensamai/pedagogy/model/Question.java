@@ -16,7 +16,7 @@ public class Question {
     private String optionC;
     private String optionD;
     
-    private String correctAnswer; // Stores "A", "B", "C", or "D"
+    private String correctAnswer; 
 
     @ManyToOne
     @JoinColumn(name = "course_id")

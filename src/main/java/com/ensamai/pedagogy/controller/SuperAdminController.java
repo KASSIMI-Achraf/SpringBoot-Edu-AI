@@ -29,15 +29,19 @@ import java.util.List;
 public class SuperAdminController {
 
     private final TeacherService teacherService;
+    private final com.ensamai.pedagogy.service.StudentService studentService;
     private final AppUserRepository appUserRepository;
     private final CourseRepository courseRepository;
     private final QuizResultRepository quizResultRepository;
     private final com.ensamai.pedagogy.service.AnalyticsService analyticsService;
 
-    public SuperAdminController(TeacherService teacherService, AppUserRepository appUserRepository,
+    public SuperAdminController(TeacherService teacherService, 
+                                com.ensamai.pedagogy.service.StudentService studentService,
+                                AppUserRepository appUserRepository,
                                 CourseRepository courseRepository, QuizResultRepository quizResultRepository,
                                 com.ensamai.pedagogy.service.AnalyticsService analyticsService) {
         this.teacherService = teacherService;
+        this.studentService = studentService;
         this.appUserRepository = appUserRepository;
         this.courseRepository = courseRepository;
         this.quizResultRepository = quizResultRepository;
@@ -52,10 +56,7 @@ public class SuperAdminController {
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
-    // ==========================================
-    // ADMIN DASHBOARD
-    // ==========================================
-
+    
     @GetMapping("/dashboard")
     public String adminDashboard(Model model) {
         // System-wide analytics
@@ -90,9 +91,7 @@ public class SuperAdminController {
         return "admin/admin_dashboard";
     }
 
-    // ==========================================
     // TEACHER MANAGEMENT
-    // ==========================================
 
     @GetMapping("/teachers")
     public String listTeachers(Model model) {
@@ -228,5 +227,51 @@ public class SuperAdminController {
         model.addAttribute("coursePassRateData", coursePassRateData);
         
         return "admin/admin_analytics";
+    }
+
+    // STUDENT MANAGEMENT
+
+    @GetMapping("/students")
+    public String listStudents(Model model) {
+        model.addAttribute("students", studentService.getAllStudents());
+        return "admin/student_list";
+    }
+
+    @GetMapping("/create-student")
+    public String showCreateStudentForm(Model model) {
+        model.addAttribute("student", new AppUser());
+        return "admin/student_create";
+    }
+
+    @PostMapping("/create-student")
+    public String createStudent(@ModelAttribute AppUser student, RedirectAttributes redirectAttributes) {
+        try {
+            studentService.createStudent(student);
+            redirectAttributes.addFlashAttribute("successMessage", "Student registered successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error creating student: " + e.getMessage());
+            return "redirect:/admin/create-student";
+        }
+        return "redirect:/admin/students";
+    }
+
+    @GetMapping("/student/{id}/progress")
+    public String viewStudentProgress(@PathVariable Long id, Model model) {
+        AppUser student = studentService.getStudentById(id);
+        List<QuizResult> results = studentService.getStudentProgress(id);
+        model.addAttribute("student", student);
+        model.addAttribute("results", results);
+        return "admin/student_details";
+    }
+
+    @PostMapping("/student/{id}/delete")
+    public String deleteStudent(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            studentService.deleteStudent(id);
+            redirectAttributes.addFlashAttribute("successMessage", "Student deleted successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error deleting student: " + e.getMessage());
+        }
+        return "redirect:/admin/students";
     }
 }

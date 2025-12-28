@@ -23,12 +23,11 @@ public class AnalyticsController {
     
     @Autowired
     private AppUserRepository appUserRepository;
-    
-    // =====================================
+
     // STUDENT ANALYTICS
-    // =====================================
     
     @GetMapping("/student/analytics")
+    @PreAuthorize("hasAuthority('STUDENT')")
     public String studentAnalytics(Authentication auth, Model model) {
         Long studentId = getCurrentStudentId(auth);
         
@@ -53,11 +52,9 @@ public class AnalyticsController {
         
         return "student/analytics";
     }
-    
-    // =====================================
+
     // TEACHER/ADMIN ANALYTICS
-    // =====================================
-    
+  
     @GetMapping("/teacher/analytics")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'TEACHER')")
     public String teacherAnalytics(

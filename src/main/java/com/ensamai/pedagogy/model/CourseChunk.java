@@ -24,7 +24,6 @@ public class CourseChunk {
     public CourseChunk() {
     }
 
-    // --- MANUALLY ADDED GETTERS AND SETTERS ---
     
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }

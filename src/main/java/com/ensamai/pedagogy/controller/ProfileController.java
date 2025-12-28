@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-@RequestMapping("/student") // Changed URL prefix to match folder logic
+@RequestMapping("/student") 
 public class ProfileController {
 
     private final AppUserRepository appUserRepository;
@@ -24,14 +24,11 @@ public class ProfileController {
         this.passwordEncoder = passwordEncoder;
     }
 
-    // 1. Show the Change Password Page
     @GetMapping("/change-password")
     public String showChangePasswordForm(Model model) {
-        // Now looks inside templates/student/ folder
         return "student/password_change"; 
     }
 
-    // 2. Process the Password Change
     @PostMapping("/change-password")
     public String changePassword(@RequestParam String newPassword, 
                                  @RequestParam String confirmPassword, 

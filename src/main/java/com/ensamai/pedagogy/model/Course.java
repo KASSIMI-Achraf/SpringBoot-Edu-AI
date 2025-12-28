@@ -19,15 +19,12 @@ public class Course {
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    // --- PDF FIELDS ---
     @Lob
     @Column(length = 10000000)
     private byte[] pdfFile;
 
     private String pdfFilename;
-    // ----------------------
 
-    // Teacher who owns this course
     @ManyToOne
     @JoinColumn(name = "teacher_id")
     private AppUser teacher;
@@ -40,7 +37,6 @@ public class Course {
     )
     private List<AppUser> students = new ArrayList<>();
 
-    // --- GETTERS & SETTERS ---
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

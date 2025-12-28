@@ -38,16 +38,16 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable()) // Disable CSRF for simplicity in dev
             .authorizeHttpRequests(auth -> auth
-                // 1. Allow Public Access to Login, Error pages, and Static Resources
+                //  Allow Public Access to Login, Error pages, and Static Resources
                 .requestMatchers("/login", "/error", "/h2-console/**", "/css/**", "/js/**", "/images/**").permitAll()
                 
-                // 2. Admin-only endpoints
+                //  Admin-only endpoints
                 .requestMatchers("/admin/**").hasAuthority("ADMIN")
                 
-                // 3. Teacher endpoints (admin can also access due to hierarchy)
+                //  Teacher endpoints 
                 .requestMatchers("/teacher/**").hasAnyAuthority("ADMIN", "TEACHER")
                 
-                // 4. All other requests must be authenticated
+                //  All other requests must be authenticated
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form

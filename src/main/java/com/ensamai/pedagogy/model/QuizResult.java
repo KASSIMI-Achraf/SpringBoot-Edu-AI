@@ -10,7 +10,7 @@ public class QuizResult {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private int score; // e.g., 85 (out of 100)
+    private int score; 
     
     private LocalDateTime completedAt;
 
@@ -21,6 +21,13 @@ public class QuizResult {
     @ManyToOne
     @JoinColumn(name = "course_id")
     private Course course;
+
+    @Column(name = "correct_answers")
+    private Integer correctAnswers;
+
+    @Column(name = "total_questions")
+    private Integer totalQuestions;
+    private Integer timeTaken; // in minutes
 
     public QuizResult() {
         this.completedAt = LocalDateTime.now();
@@ -33,7 +40,15 @@ public class QuizResult {
         this.completedAt = LocalDateTime.now();
     }
 
-    // --- GETTERS AND SETTERS ---
+    public QuizResult(AppUser student, Course course, int score, Integer correctAnswers, Integer totalQuestions) {
+        this.student = student;
+        this.course = course;
+        this.score = score;
+        this.correctAnswers = correctAnswers;
+        this.totalQuestions = totalQuestions;
+        this.completedAt = LocalDateTime.now();
+    }
+
     
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -41,7 +56,6 @@ public class QuizResult {
     public int getScore() { return score; }
     public void setScore(int score) { this.score = score; }
 
-    // FIXED: Added this method so the Service can call it
     public int getScorePercentage() {
         return this.score; 
     }
@@ -54,4 +68,13 @@ public class QuizResult {
 
     public Course getCourse() { return course; }
     public void setCourse(Course course) { this.course = course; }
+
+    public Integer getCorrectAnswers() { return correctAnswers; }
+    public void setCorrectAnswers(Integer correctAnswers) { this.correctAnswers = correctAnswers; }
+
+    public Integer getTotalQuestions() { return totalQuestions; }
+    public void setTotalQuestions(Integer totalQuestions) { this.totalQuestions = totalQuestions; }
+
+    public Integer getTimeTaken() { return timeTaken; }
+    public void setTimeTaken(Integer timeTaken) { this.timeTaken = timeTaken; }
 }

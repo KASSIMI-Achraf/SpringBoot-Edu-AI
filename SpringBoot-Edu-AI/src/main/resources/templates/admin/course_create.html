@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/_header :: header-head(title='Create Course')}"></head>
+<body>
+<nav th:replace="~{fragments/_header :: header-nav}"></nav>
+
+<div class="container py-5" style="max-width: 800px;">
+    <div class="card card-pro">
+        <div class="card-header-pro">
+            <h4 class="mb-0 fw-bold">Create New Course</h4>
+        </div>
+        <div class="card-body p-4">
+            
+            <form th:action="@{/admin/create-course}" th:object="${course}" method="post" enctype="multipart/form-data">
+                
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Course Title</label>
+                    <input type="text" class="form-control" th:field="*{title}" placeholder="e.g. Introduction to Physics" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Description</label>
+                    <textarea class="form-control" th:field="*{description}" rows="2" placeholder="Brief summary displayed on dashboard..."></textarea>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-bold">AI Source Material</label>
+                    <textarea class="form-control font-monospace bg-light" th:field="*{content}" rows="6" 
+                              placeholder="Paste the full text content here. The AI will use this to generate quiz questions." required></textarea>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-bold">Reference PDF (Optional)</label>
+                    <input type="file" name="file" class="form-control" accept="application/pdf">
+                </div>
+
+                <hr>
+
+                <div class="d-flex justify-content-end gap-2">
+                    <a th:href="@{/admin/dashboard}" class="btn btn-light border btn-action">Cancel</a>
+                    <button type="submit" class="btn btn-primary btn-action px-4">Save Course</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/_footer :: footer}"></footer>
+</body>
+</html>

@@ -1,57 +1,73 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head th:replace="~{fragments/_header :: header-head(title='Student Details')}"></head>
+
 <body>
-<nav th:replace="~{fragments/_header :: header-nav}"></nav>
+    <nav th:replace="~{fragments/_header :: header-nav-admin}"></nav>
 
-<div class="container py-5">
-    <a th:href="@{/admin/students}" class="btn btn-link text-decoration-none ps-0 mb-3 text-muted">
-        &larr; Back to Directory
-    </a>
-
-    <div class="card card-pro mb-4">
-        <div class="card-body p-4 d-flex align-items-center">
-            <div class="bg-light rounded-circle p-4 me-4 border">
-                <i class="bi bi-person-circle display-4 text-secondary"></i>
-            </div>
+    <div class="container py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
-                <h2 class="fw-bold mb-1" th:text="${student.username}">Student Name</h2>
-                <p class="text-muted mb-0">Account Details & Quiz History</p>
+                <h1 class="h3 fw-bold text-dark">Student Progress</h1>
+                <p class="text-muted">Viewing performance for <span
+                        th:text="${student.fullName ?: student.username}">Student</span></p>
             </div>
+            <div class="d-flex gap-2">
+                <a th:href="@{/admin/students}" class="btn btn-light btn-action">
+                    <i class="bi bi-arrow-left"></i> Back to Students
+                </a>
+            </div>
+        </div>
+
+        <div class="card card-pro mb-4">
+            <div class="card-body p-4 d-flex align-items-center">
+                <div class="bg-light rounded-circle p-4 me-4 border">
+                    <i class="bi bi-person-circle display-4 text-secondary"></i>
+                </div>
+                <div>
+                    <h2 class="fw-bold mb-1" th:text="${student.fullName ?: student.username}">Student Name</h2>
+                    <p class="text-primary mb-1" th:text="${student.email}">student@example.com</p>
+                    <p class="text-muted mb-0 small">Account Details & Quiz History</p>
+                </div>
+            </div>
+        </div>
+
+        <h4 class="mb-3 fw-bold text-dark">Performance History</h4>
+        <div class="card card-pro">
+            <table class="table mb-0 align-middle">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4 py-3">Course</th>
+                        <th>Date Taken</th>
+                        <th>Score</th>
+                        <th>Result</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="result : ${results}">
+                        <td class="ps-4 fw-medium" th:text="${result.course.title}">Course</td>
+                        <td class="text-muted" th:text="${#temporals.format(result.completedAt, 'MMM dd, yyyy HH:mm')}">
+                            Date</td>
+                        <td class="fw-bold" th:text="${result.score} + '%'">80%</td>
+                        <td>
+                            <span th:if="${result.score >= 50}"
+                                class="badge bg-success bg-opacity-10 text-success border border-success">PASSED</span>
+                            <span th:if="${result.score < 50}"
+                                class="badge bg-danger bg-opacity-10 text-danger border border-danger">FAILED</span>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(results)}">
+                        <td colspan="4" class="text-center py-4 text-muted">
+                            No quizzes completed yet.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 
-    <h4 class="mb-3 fw-bold text-dark">Performance History</h4>
-    <div class="card card-pro">
-        <table class="table mb-0 align-middle">
-            <thead class="bg-light">
-                <tr>
-                    <th class="ps-4 py-3">Course</th>
-                    <th>Date Taken</th>
-                    <th>Score</th>
-                    <th>Result</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="result : ${results}">
-                    <td class="ps-4 fw-medium" th:text="${result.course.title}">Course</td>
-                    <td class="text-muted" th:text="${#temporals.format(result.completedAt, 'MMM dd, yyyy HH:mm')}">Date</td>
-                    <td class="fw-bold" th:text="${result.score} + '%'">80%</td>
-                    <td>
-                        <span th:if="${result.score >= 50}" class="badge bg-success bg-opacity-10 text-success border border-success">PASSED</span>
-                        <span th:if="${result.score < 50}" class="badge bg-danger bg-opacity-10 text-danger border border-danger">FAILED</span>
-                    </td>
-                </tr>
-                <tr th:if="${#lists.isEmpty(results)}">
-                    <td colspan="4" class="text-center py-4 text-muted">
-                        No quizzes completed yet.
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
-
-<footer th:replace="~{fragments/_footer :: footer}"></footer>
+    <footer th:replace="~{fragments/_footer :: footer}"></footer>
 </body>
+
 </html>

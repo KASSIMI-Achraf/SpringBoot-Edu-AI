@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/_header :: header-head(title='Course Materials')}"></head>
+
+<body>
+    <nav th:replace="~{fragments/_header :: header-nav-student}"></nav>
+
+    <!-- Markdown & Math Libraries -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+    <div class="container py-4">
+        <!-- Back Button & Header -->
+        <div class="mb-4">
+            <a th:href="@{/courses}" class="btn btn-link text-decoration-none ps-0 text-muted mb-2">
+                <i class="bi bi-arrow-left"></i> Back to My Courses
+            </a>
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h1 class="h3 fw-bold text-dark" th:text="${course.title}">Course Title</h1>
+                    <p class="text-muted" th:text="${course.description}">Course description</p>
+                </div>
+                <a th:href="@{/quiz/{id}(id=${course.id})}" class="btn btn-primary btn-action shadow-sm">
+                    <i class="bi bi-lightning-charge-fill"></i> Take Quiz
+                </a>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Main Content Column -->
+            <div class="col-lg-8">
+                <!-- Course Materials Card -->
+                <div class="card card-pro">
+                    <div class="card-header-pro d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0 fw-bold">
+                            <i class="bi bi-journal-text me-2"></i>Course Materials
+                        </h5>
+                        <small class="text-muted">Supports Markdown & LaTeX Math</small>
+                    </div>
+                    <div class="card-body p-4">
+                        <!-- Show content if available -->
+                        <div th:if="${course.content}">
+                            <!-- Raw content hidden, used by JS to render markdown -->
+                            <div id="raw-content" th:text="${course.content}" style="display:none;"></div>
+                            <!-- Rendered markdown will appear here -->
+                            <div id="rendered-content" class="course-content"></div>
+                        </div>
+                        <!-- Show message if no content -->
+                        <div th:unless="${course.content}" class="text-center py-5 text-muted">
+                            <i class="bi bi-journal-x fs-1 d-block mb-3"></i>
+                            <p>No text materials uploaded for this course yet.</p>
+                            <p th:if="${hasPdf}" class="small">You can view the course PDF below.</p>
+                            <p th:unless="${hasPdf}" class="small">Please contact your teacher for course materials.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PDF Download Card -->
+                <div class="card card-pro mt-4" th:if="${hasPdf}">
+                    <div class="card-header-pro" style="background: rgba(25, 135, 84, 0.1);">
+                        <h5 class="mb-0 fw-bold text-success">
+                            <i class="bi bi-file-earmark-pdf-fill me-2"></i>Course PDF
+                        </h5>
+                    </div>
+                    <div class="card-body p-4 text-center">
+                        <div class="bg-light rounded-3 p-4 mb-3">
+                            <i class="bi bi-file-earmark-pdf text-danger" style="font-size: 3rem;"></i>
+                            <p class="mb-0 mt-2 fw-bold" th:text="${course.pdfFilename}">document.pdf</p>
+                        </div>
+                        <a th:href="@{/course/{id}/download(id=${course.id})}"
+                            class="btn btn-success btn-action btn-lg">
+                            <i class="bi bi-download me-2"></i> Download PDF
+                        </a>
+                    </div>
+                </div>
+
+                <!-- No PDF Card -->
+                <div class="card card-pro mt-4" th:unless="${hasPdf}">
+                    <div class="card-header-pro">
+                        <h5 class="mb-0 fw-bold text-muted">
+                            <i class="bi bi-file-earmark-pdf me-2"></i>Course PDF
+                        </h5>
+                    </div>
+                    <div class="card-body p-4 text-center text-muted">
+                        <i class="bi bi-file-earmark-x fs-1 d-block mb-2"></i>
+                        <p class="mb-0">No PDF has been attached to this course.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar Column -->
+            <div class="col-lg-4">
+                <!-- Course Info Card -->
+                <div class="card card-pro mb-4">
+                    <div class="card-header-pro">
+                        <h5 class="mb-0 fw-bold">
+                            <i class="bi bi-info-circle me-2"></i>About This Course
+                        </h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <p class="mb-3" th:text="${course.description ?: 'No description available.'}">Description</p>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <span th:if="${hasPdf}" class="badge bg-success">
+                                <i class="bi bi-file-pdf"></i> Has PDF
+                            </span>
+                            <span th:if="${course.content}" class="badge bg-primary">
+                                <i class="bi bi-file-text"></i> Has Notes
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions Card -->
+                <div class="card card-pro">
+                    <div class="card-header-pro">
+                        <h5 class="mb-0 fw-bold">
+                            <i class="bi bi-lightning-charge me-2"></i>Quick Actions
+                        </h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="d-grid gap-2">
+                            <a th:href="@{/quiz/{id}(id=${course.id})}" class="btn btn-primary btn-action">
+                                <i class="bi bi-pencil-square"></i> Take Quiz
+                            </a>
+                            <a th:href="@{/student/analytics}" class="btn btn-outline-secondary btn-action">
+                                <i class="bi bi-graph-up"></i> View My Progress
+                            </a>
+                            <a th:if="${hasPdf}" th:href="@{/course/{id}/download(id=${course.id})}"
+                                class="btn btn-outline-success btn-action">
+                                <i class="bi bi-download"></i> Download PDF
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Markdown Help -->
+                <div class="card card-pro mt-4">
+                    <div class="card-header-pro">
+                        <h5 class="mb-0 fw-bold">
+                            <i class="bi bi-question-circle me-2"></i>Formatting Guide
+                        </h5>
+                    </div>
+                    <div class="card-body p-4 small text-muted">
+                        <p class="mb-2">Course content supports:</p>
+                        <ul class="mb-0">
+                            <li><strong>Markdown</strong> - headings, lists, bold, italic</li>
+                            <li><strong>LaTeX Math</strong> - use <code>$...$</code> for inline, <code>$$...$$</code>
+                                for block</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments/_footer :: footer}"></footer>
+
+    <style>
+        .course-content {
+            line-height: 1.8;
+            font-size: 1rem;
+            color: #4a5568;
+        }
+
+        .course-content h1,
+        .course-content h2,
+        .course-content h3 {
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            color: #2d3748;
+        }
+
+        .course-content h1 {
+            font-size: 1.75rem;
+        }
+
+        .course-content h2 {
+            font-size: 1.5rem;
+        }
+
+        .course-content h3 {
+            font-size: 1.25rem;
+        }
+
+        .course-content p {
+            margin-bottom: 1rem;
+        }
+
+        .course-content ul,
+        .course-content ol {
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+        }
+
+        .course-content pre {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+            overflow-x: auto;
+        }
+
+        .course-content code {
+            background: #edf2f7;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        .course-content blockquote {
+            border-left: 4px solid #667eea;
+            padding-left: 1rem;
+            margin: 1rem 0;
+            color: #718096;
+            font-style: italic;
+        }
+
+        .course-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+
+        .course-content th,
+        .course-content td {
+            border: 1px solid #e2e8f0;
+            padding: 0.5rem;
+            text-align: left;
+        }
+
+        .course-content th {
+            background: #f7fafc;
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const rawContent = document.getElementById('raw-content');
+            const renderedContent = document.getElementById('rendered-content');
+
+            if (rawContent && renderedContent) {
+                // Parse markdown to HTML
+                const markdownText = rawContent.textContent || rawContent.innerText;
+                renderedContent.innerHTML = marked.parse(markdownText);
+
+                // Render LaTeX math formulas
+                renderMathInElement(renderedContent, {
+                    delimiters: [
+                        { left: '$$', right: '$$', display: true },
+                        { left: '$', right: '$', display: false },
+                        { left: '\\[', right: '\\]', display: true },
+                        { left: '\\(', right: '\\)', display: false }
+                    ],
+                    throwOnError: false
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -129,7 +129,7 @@ public class TeacherController {
         return "redirect:/teacher/dashboard";
     }
 
-    // --- STUDENTS ---
+    //STUDENTS
     @GetMapping("/students")
     public String listStudents(Model model) {
         model.addAttribute("students", appUserRepository.findByRole(Role.STUDENT));
@@ -152,7 +152,7 @@ public class TeacherController {
         return "redirect:/teacher/students";
     }
 
-    // --- QUIZ & AI ---
+    //QUIZ & AI 
     @GetMapping("/course/{id}/generate-quiz")
     public String generateQuizPreview(@PathVariable Long id, Model model, Authentication auth) {
         Course course = courseRepository.findById(id).orElseThrow();
@@ -184,7 +184,7 @@ public class TeacherController {
     }
 
     @PostMapping("/course/{id}/save-quiz")
-    public String saveQuiz(@PathVariable Long id, @ModelAttribute QuizForm quizForm) {
+    public String saveQuiz(@PathVariable Long id, @ModelAttribute QuizForm quizForm, Authentication auth) {
         Course course = courseRepository.findById(id).orElseThrow();
         if (quizForm.getQuestions() != null) {
             for (Question q : quizForm.getQuestions()) {
@@ -197,7 +197,7 @@ public class TeacherController {
         return getDashboardRedirect(auth);
     }
 
-    // --- COURSE CRUD ---
+    // COURSE CRUD 
     @GetMapping("/create-course")
     public String showCreateForm(Model model) { 
         model.addAttribute("course", new Course()); 
@@ -253,8 +253,7 @@ public class TeacherController {
         }
         return getDashboardRedirect(auth);
     }
-
-    // --- DELETE COURSE ---
+    // DELETE COURSE
     @Transactional
     @PostMapping("/delete/{id}")
     public String deleteCourse(@PathVariable Long id, Authentication auth) {
@@ -265,31 +264,30 @@ public class TeacherController {
             return "redirect:/teacher/dashboard?error=access_denied";
         }
         
-        // 1. Delete RAG Vectors
+        //  Delete RAG Vectors
         List<CourseChunk> chunks = courseChunkRepository.findByCourseId(id);
         courseChunkRepository.deleteAll(chunks);
 
-        // 2. Delete Official Questions
+        // Delete Official Questions
         List<Question> questions = questionRepository.findByCourseId(id);
         questionRepository.deleteAll(questions);
-
-        // 3. Delete Student Quiz Results
+        // Delete Student Quiz Results
         List<QuizResult> results = quizResultRepository.findAll().stream()
                 .filter(r -> r.getCourse().getId().equals(id))
                 .collect(Collectors.toList());
         quizResultRepository.deleteAll(results);
 
-        // 4. Clear Student Enrollments
+        // Clear Student Enrollments
         c.getStudents().clear();
         courseRepository.save(c); 
 
-        // 5. Delete the Course
+        // Delete the Course
         courseRepository.deleteById(id); 
         
         return getDashboardRedirect(auth);
     }
 
-    // --- STUDENT PROGRESS & DELETE ---
+    // STUDENT PROGRESS & DELETE
     @GetMapping("/student/{id}/progress")
     public String viewStudentProgress(@PathVariable Long id, Model model) {
         AppUser student = appUserRepository.findById(id)

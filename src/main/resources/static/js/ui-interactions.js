@@ -1,16 +1,10 @@
-/**
- * UI Interactions for PedagogyAI - Professional Light Theme
- * Handles subtle particle backgrounds and card tilt effects.
- */
 
 document.addEventListener('DOMContentLoaded', () => {
     initParticles();
     initTiltEffect();
 });
 
-/* ============================
-   1. PARTICLE BACKGROUND SYSTEM (ADAPTED FOR LIGHT THEME)
-   ============================ */
+
 function initParticles() {
     // Create canvas
     const canvas = document.createElement('canvas');
@@ -117,9 +111,7 @@ function initParticles() {
     animate();
 }
 
-/* ============================
-   2. 3D TILT EFFECT FOR CARDS (SUBTLE)
-   ============================ */
+
 function initTiltEffect() {
     const cards = document.querySelectorAll('.card-pro, .login-card');
 

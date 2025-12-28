@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/_header :: header-head(title='Admin Dashboard')}"></head>
+
+<body>
+    <nav th:replace="~{fragments/_header :: header-nav-admin}"></nav>
+
+    <div class="container py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="h3 fw-bold text-dark">Admin Dashboard</h1>
+                <p class="text-muted">System overview and teacher management</p>
+            </div>
+            <div class="d-flex gap-2">
+                <a th:href="@{/admin/teachers/create}" class="btn btn-primary btn-action shadow-sm">
+                    <i class="bi bi-plus-lg"></i> Add New Teacher
+                </a>
+                <a th:href="@{/admin/courses}" class="btn btn-outline-primary btn-action">
+                    <i class="bi bi-book"></i> Go to Courses
+                </a>
+            </div>
+        </div>
+
+        <!-- System Stats Cards -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-3">
+                <div class="card card-pro h-100">
+                    <div class="card-body text-center p-4">
+                        <div class="metric-icon bg-primary bg-opacity-10 text-primary mb-3">
+                            <i class="bi bi-person-workspace fs-1"></i>
+                        </div>
+                        <h3 class="fw-bold mb-1" th:text="${analytics.totalTeachers}">0</h3>
+                        <p class="text-muted mb-0 small">Teachers</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card card-pro h-100">
+                    <div class="card-body text-center p-4">
+                        <div class="metric-icon bg-success bg-opacity-10 text-success mb-3">
+                            <i class="bi bi-people fs-1"></i>
+                        </div>
+                        <h3 class="fw-bold mb-1" th:text="${analytics.totalStudents}">0</h3>
+                        <p class="text-muted mb-0 small">Students</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card card-pro h-100">
+                    <div class="card-body text-center p-4">
+                        <div class="metric-icon bg-info bg-opacity-10 text-info mb-3">
+                            <i class="bi bi-journal-bookmark fs-1"></i>
+                        </div>
+                        <h3 class="fw-bold mb-1" th:text="${analytics.totalCourses}">0</h3>
+                        <p class="text-muted mb-0 small">Courses</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card card-pro h-100">
+                    <div class="card-body text-center p-4">
+                        <div class="metric-icon bg-warning bg-opacity-10 text-warning mb-3">
+                            <i class="bi bi-clipboard-check fs-1"></i>
+                        </div>
+                        <h3 class="fw-bold mb-1" th:text="${analytics.totalQuizzesTaken}">0</h3>
+                        <p class="text-muted mb-0 small">Quizzes Taken</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance Summary -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-6">
+                <div class="card card-pro h-100">
+                    <div class="card-body text-center p-4">
+                        <h5 class="text-muted mb-2">System Average Score</h5>
+                        <h2 class="fw-bold text-primary" th:text="${analytics.systemAverageScore} + '%'">0%</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card card-pro h-100">
+                    <div class="card-body text-center p-4">
+                        <h5 class="text-muted mb-2">Overall Pass Rate</h5>
+                        <h2 class="fw-bold text-success" th:text="${analytics.overallPassRate} + '%'">0%</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Teachers List -->
+        <div class="card card-pro">
+            <div class="card-header-pro d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 fw-bold">Teachers</h5>
+                <a th:href="@{/admin/teachers}" class="btn btn-sm btn-outline-primary btn-action">View All</a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="ps-4 py-3">Name</th>
+                                <th>Email</th>
+                                <th>Status</th>
+                                <th class="text-end pe-4">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="teacher : ${teachers}">
+                                <td class="ps-4">
+                                    <span class="fw-bold" th:text="${teacher.fullName ?: teacher.username}">Teacher
+                                        Name</span>
+                                    <div class="small text-muted" th:text="'@' + ${teacher.username}">@username</div>
+                                </td>
+                                <td th:text="${teacher.email}">email@example.com</td>
+                                <td>
+                                    <span th:if="${teacher.active}" class="badge bg-success">Active</span>
+                                    <span th:unless="${teacher.active}" class="badge bg-danger">Inactive</span>
+                                </td>
+                                <td class="text-end pe-4">
+                                    <a th:href="@{/admin/teachers/{id}(id=${teacher.id})}"
+                                        class="btn btn-sm btn-outline-primary btn-action">View</a>
+                                    <a th:href="@{/admin/teachers/{id}/edit(id=${teacher.id})}"
+                                        class="btn btn-sm btn-outline-secondary btn-action">Edit</a>
+                                </td>
+                            </tr>
+                            <tr th:if="${teachers.empty}">
+                                <td colspan="4" class="text-center py-5 text-muted">
+                                    No teachers found. Click "Add New Teacher" to get started.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments/_footer :: footer}"></footer>
+
+
+</body>
+
+</html>

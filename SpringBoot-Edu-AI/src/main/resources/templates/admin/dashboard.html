@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/_header :: header-head(title='Admin Dashboard')}"></head>
+<body>
+<nav th:replace="~{fragments/_header :: header-nav}"></nav>
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 fw-bold text-dark">Dashboard</h1>
+            <p class="text-muted">Manage your courses and content</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a th:href="@{/admin/students}" class="btn btn-outline-dark btn-action">
+                <i class="bi bi-people"></i> View Student Directory
+            </a>
+            <a th:href="@{/admin/create-course}" class="btn btn-primary btn-action shadow-sm">
+                <i class="bi bi-plus-lg"></i> Create New Course
+            </a>
+        </div>
+    </div>
+
+    <div class="card card-pro">
+        <div class="card-header-pro d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 fw-bold">Active Courses</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="ps-4 py-3">Course Name</th>
+                            <th>Description</th>
+                            <th>Enrolled</th>
+                            <th class="text-end pe-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="course : ${courses}">
+                            <td class="ps-4">
+                                <span class="fw-bold text-dark" th:text="${course.title}">Course Title</span>
+                                <div th:if="${course.pdfFile != null}" class="small text-success">
+                                    <i class="bi bi-file-earmark-pdf-fill"></i> PDF Attached
+                                </div>
+                            </td>
+                            <td class="text-muted text-truncate" style="max-width: 250px;" th:text="${course.description}">
+                                Description goes here...
+                            </td>
+                            <td>
+                                <span class="badge bg-light text-dark border">
+                                    <span th:text="${course.students.size()}">0</span> Students
+                                </span>
+                                <a th:href="@{/admin/enroll/{id}(id=${course.id})}" class="btn btn-link btn-sm text-decoration-none p-0 ms-2">
+                                    + Enroll
+                                </a>
+                            </td>
+                            <td class="text-end pe-4">
+                                <div class="d-flex justify-content-end gap-2">
+                                    <a th:href="@{/admin/course/{id}/generate-quiz(id=${course.id})}" 
+                                       class="btn btn-sm btn-outline-primary btn-action">
+                                        <i class="bi bi-magic"></i> Generate Quiz
+                                    </a>
+                                    <a th:href="@{/admin/edit/{id}(id=${course.id})}" 
+                                       class="btn btn-sm btn-outline-secondary btn-action">
+                                        Edit
+                                    </a>
+                                    <form th:action="@{/admin/delete/{id}(id=${course.id})}" method="post" 
+                                          onsubmit="return confirm('Permanently delete this course?');">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger btn-action">
+                                            Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:if="${courses.empty}">
+                            <td colspan="4" class="text-center py-5 text-muted">
+                                No courses found. Get started by clicking "Create New Course".
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/_footer :: footer}"></footer>
+</body>
+</html>

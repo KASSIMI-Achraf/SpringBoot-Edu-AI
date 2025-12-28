@@ -22,22 +22,14 @@ public class GeminiService {
 
     @Value("${gemini.api.url}") 
     private String baseUrl; 
-    // Ensure application.properties is: 
-    // gemini.api.url=https://generativelanguage.googleapis.com/v1beta/models/
+
 
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();
-
-    /**
-     * RAG STEP 1: EMBEDDINGS (Fixed JSON Structure)
-     */
     public List<Double> getEmbedding(String text) {
         String url = baseUrl + "text-embedding-004:embedContent?key=" + apiKey;
 
-        try {
-            // FIXED: Construct the exact JSON structure Gemini demands
-            // { "content": { "parts": [ { "text": "..." } ] } }
-            
+        try {  
             ObjectNode rootNode = objectMapper.createObjectNode();
             ObjectNode contentNode = objectMapper.createObjectNode();
             ArrayNode partsArray = objectMapper.createArrayNode();
@@ -74,16 +66,12 @@ public class GeminiService {
         return Collections.emptyList();
     }
 
-    /**
-     * RAG STEP 2: GENERATION (Fixed Model Name)
-     */
+
     public String generateContent(String prompt) {
-        // FIXED: Changed 'gemini-1.5-flash' to 'gemini-1.5-flash-001'
-        // If this still fails, try 'gemini-pro'
+
         String url = baseUrl + "gemini-2.5-flash:generateContent?key=" + apiKey;
 
         try {
-            // Build JSON: { "contents": [{ "parts": [{ "text": "..." }] }] }
             ObjectNode rootNode = objectMapper.createObjectNode();
             ArrayNode contentsArray = rootNode.putArray("contents");
             ObjectNode contentObj = contentsArray.addObject();
@@ -100,7 +88,7 @@ public class GeminiService {
 
         } catch (Exception e) {
             System.err.println("Error generating content: " + e.getMessage());
-            // Return valid empty JSON array to prevent Controller crash
+
             return "[]"; 
         }
     }
@@ -112,7 +100,6 @@ public class GeminiService {
                     .path("content").path("parts").get(0)
                     .path("text").asText();
             
-            // Clean up Markdown code blocks
             return text.replace("```json", "").replace("```", "").trim();
         } catch (Exception e) {
             System.err.println("Error parsing Gemini response: " + e.getMessage());

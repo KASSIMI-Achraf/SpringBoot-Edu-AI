@@ -28,15 +28,15 @@ public class AiAgentService {
 
     /**
      * THE AGENTIC WORKFLOW:
-     * 1. Analyze History -> 2. Determine Difficulty -> 3. Fetch Context (RAG) -> 4. Generate Quiz
+     *  Analyze History ->  Determine Difficulty -> Fetch Context (RAG) -> Generate Quiz
      */
     public String generateQuiz(Long studentId, Long courseId) {
         
-        // --- STEP 1: OBSERVE (Analyze Student History) ---
+       
         List<QuizResult> history = quizResultRepository.findByStudentIdAndCourseId(studentId, courseId);
         
-        // --- STEP 2: DECIDE (Determine Difficulty) ---
-        String difficulty = "EASY"; // Default for beginners
+    
+        String difficulty = "EASY"; // Default 
         String pedagogicalGoal = "Focus on basic definitions and core concepts.";
         Integer  n = 5;
 
@@ -60,17 +60,13 @@ public class AiAgentService {
             }
         }
 
-        // --- STEP 3: ACT (Retrieve Context via RAG) ---
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new IllegalArgumentException("Course not found"));
         
-        // We query the RAG system for concepts relevant to this difficulty
-        // (e.g., if Hard, we might search for 'advanced implications')
+
         String ragQuery = "Core concepts of " + course.getTitle();
         String context = ragService.retrieveContext(course, ragQuery);
 
-        // --- STEP 4: GENERATE (Prompt Engineering) ---
-        // We inject the Pedagogical Goal and Strict JSON format into the prompt
         String prompt = String.format("""
             You are an AI Tutor Agent.
             

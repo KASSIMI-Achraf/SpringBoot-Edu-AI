@@ -1,62 +1,81 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head th:replace="~{fragments/_header :: header-head(title='Manage Students')}"></head>
+
 <body>
-<nav th:replace="~{fragments/_header :: header-nav}"></nav>
+    <nav th:replace="~{fragments/_header :: header-nav-admin}"></nav>
 
-<div class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h1 class="h3 fw-bold">Student Directory</h1>
-            <p class="text-muted">Manage student accounts</p>
+    <div class="container py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="h3 fw-bold text-dark">Student Directory</h1>
+                <p class="text-muted">Manage student accounts</p>
+            </div>
+            <div class="d-flex gap-2">
+                <a th:href="@{/admin/dashboard}" class="btn btn-light btn-action">
+                    <i class="bi bi-arrow-left"></i> Back to Dashboard
+                </a>
+                <a th:href="@{/admin/create-student}" class="btn btn-primary btn-action shadow-sm">
+                    <i class="bi bi-person-plus"></i> Register New Student
+                </a>
+            </div>
         </div>
-        <a th:href="@{/admin/create-student}" class="btn btn-primary btn-action shadow-sm">
-            <i class="bi bi-person-plus-fill"></i> Register New Student
-        </a>
-    </div>
 
-    <div class="card card-pro">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="bg-light">
-                    <tr>
-                        <th class="ps-4 py-3">ID</th>
-                        <th>Username</th>
-                        <th>Role</th>
-                        <th class="text-end pe-4">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="student : ${students}">
-                        <td class="ps-4 text-muted" th:text="${student.id}">1</td>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <div class="bg-light rounded-circle p-2 me-2 text-primary">
-                                    <i class="bi bi-person-fill"></i>
+        <div class="card card-pro">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="ps-4 py-3">ID</th>
+                            <th>Student</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                            <th class="text-end pe-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="student : ${students}">
+                            <td class="ps-4 text-muted" th:text="${student.id}">1</td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-2 text-primary">
+                                        <i class="bi bi-person-fill"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold" th:text="${student.fullName ?: student.username}">Student
+                                            Name</div>
+                                        <div class="small text-muted" th:text="'@' + ${student.username}">@username
+                                        </div>
+                                    </div>
                                 </div>
-                                <span class="fw-bold" th:text="${student.username}">User</span>
-                            </div>
-                        </td>
-                        <td><span class="badge bg-secondary">Student</span></td>
-                        <td class="text-end pe-4">
-                            <a th:href="@{/admin/student/{id}/progress(id=${student.id})}" 
-                               class="btn btn-sm btn-white border btn-action me-2">
-                                <i class="bi bi-card-list"></i> View Profile & Progress
-                            </a>
-                            <form th:action="@{/admin/student/{id}/delete(id=${student.id})}" method="post" class="d-inline"
-                                  onsubmit="return confirm('Are you sure? This will delete the user and their history.');">
-                                <button type="submit" class="btn btn-sm btn-outline-danger btn-action">
-                                    <i class="bi bi-trash"></i> Delete
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                            </td>
+                            <td th:text="${student.email}">student@example.com</td>
+                            <td>
+                                <span th:if="${student.active}" class="badge bg-success">Active</span>
+                                <span th:unless="${student.active}" class="badge bg-danger">Inactive</span>
+                            </td>
+                            <td class="text-end pe-4">
+                                <a th:href="@{/admin/student/{id}/progress(id=${student.id})}"
+                                    class="btn btn-sm btn-white border btn-action me-2">
+                                    <i class="bi bi-card-list"></i> View Profile & Progress
+                                </a>
+                                <form th:action="@{/admin/student/{id}/delete(id=${student.id})}" method="post"
+                                    class="d-inline"
+                                    onsubmit="return confirm('Are you sure? This will delete the user and their history.');">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger btn-action">
+                                        <i class="bi bi-trash"></i> Delete
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-</div>
 
-<footer th:replace="~{fragments/_footer :: footer}"></footer>
+    <footer th:replace="~{fragments/_footer :: footer}"></footer>
 </body>
+
 </html>

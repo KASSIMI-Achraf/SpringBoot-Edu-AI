@@ -28,10 +28,7 @@ public class AnalyticsService {
     @Autowired
     private CourseRepository courseRepository;
     
-    // =====================================
     // STUDENT ANALYTICS
-    // =====================================
-    
     public StudentAnalyticsDTO getStudentAnalytics(Long studentId) {
         List<QuizResult> results = quizResultRepository.findByStudentId(studentId);
         
@@ -128,11 +125,8 @@ public class AnalyticsService {
             .limit(limit)
             .collect(Collectors.toList());
     }
-    
-    // =====================================
-    // ADMIN ANALYTICS
-    // =====================================
-    
+
+    // ADMIN ANALYTICs
     public AdminAnalyticsDTO getAdminAnalytics() {
         int totalStudents = (int) appUserRepository.countByRole(Role.STUDENT);
         int totalQuizzesTaken = (int) quizResultRepository.count();
@@ -182,7 +176,7 @@ public class AnalyticsService {
                     dayResults.size()
                 );
             })
-            .sorted(Comparator.comparing(TrendDataPoint::getDate))
+            .sorted(Comparator.comparing(TrendDataPoint::getDate)) // Note: This might need a date parser if format is "MMM dd"
             .collect(Collectors.toList());
     }
     

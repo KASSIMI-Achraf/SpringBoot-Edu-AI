@@ -1,26 +1,25 @@
 package com.ensamai.pedagogy.dto;
 
-import com.fasterxml.jackson.annotation.JsonAlias; // Import this
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties; // Import this
+import com.fasterxml.jackson.annotation.JsonAlias; 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties; 
 import java.util.List;
 
-@JsonIgnoreProperties(ignoreUnknown = true) // Ignores "id" if AI doesn't send it
+@JsonIgnoreProperties(ignoreUnknown = true) 
 public class QuizQuestion {
     private int id;
     
-    // EXPLANATION: The AI sends "question", but we want "questionText".
-    // @JsonAlias tells Jackson: "If you see 'question' in JSON, put it here."
+
     @JsonAlias("question") 
     private String questionText;
     
     private List<String> options;
     private String correctAnswer;
 
-    // --- 1. MANDATORY: No-Args Constructor for Jackson Parsing ---
+
     public QuizQuestion() {
     }
 
-    // Existing Constructor
+
     public QuizQuestion(int id, String questionText, List<String> options, String correctAnswer) {
         this.id = id;
         this.questionText = questionText;

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/_header :: header-head(title='Admin - System Analytics')}"></head>
+
+<body>
+    <!-- USE ADMIN NAV ONLY -->
+    <nav th:replace="~{fragments/_header :: header-nav-admin}"></nav>
+
+    <div class="container py-4">
+        <!-- Header Section -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="h3 fw-bold text-dark">System Analytics</h1>
+                <p class="text-muted">Global performance metrics for all courses and students</p>
+            </div>
+            <div class="d-flex gap-2">
+                <button class="btn btn-outline-primary btn-action" onclick="window.print()">
+                    <i class="bi bi-printer"></i> Export Report
+                </button>
+                <a th:href="@{/admin/dashboard}" class="btn btn-light btn-action">
+                    <i class="bi bi-arrow-left"></i> Back to Dashboard
+                </a>
+            </div>
+        </div>
+
+        <!-- Overview Cards -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-3">
+                <div class="card card-pro h-100">
+                    <div class="card-body text-center p-4">
+                        <div class="metric-icon bg-primary bg-opacity-10 text-primary mb-3">
+                            <i class="bi bi-people fs-1"></i>
+                        </div>
+                        <h3 class="fw-bold mb-1" th:text="${totalStudents}">0</h3>
+                        <p class="text-muted mb-0 small">Total Students</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card card-pro h-100">
+                    <div class="card-body text-center p-4">
+                        <div class="metric-icon bg-success bg-opacity-10 text-success mb-3">
+                            <i class="bi bi-clipboard-check fs-1"></i>
+                        </div>
+                        <h3 class="fw-bold mb-1" th:text="${totalQuizzesTaken}">0</h3>
+                        <p class="text-muted mb-0 small">Total Quizzes Taken</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card card-pro h-100">
+                    <div class="card-body text-center p-4">
+                        <div class="metric-icon bg-warning bg-opacity-10 text-warning mb-3">
+                            <i class="bi bi-graph-up fs-1"></i>
+                        </div>
+                        <h3 class="fw-bold mb-1" th:text="${classAverageScore} + '%'">0%</h3>
+                        <p class="text-muted mb-0 small">System Average</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card card-pro h-100">
+                    <div class="card-body text-center p-4">
+                        <div class="metric-icon bg-info bg-opacity-10 text-info mb-3">
+                            <i class="bi bi-trophy fs-1"></i>
+                        </div>
+                        <h3 class="fw-bold mb-1" th:text="${overallPassRate} + '%'">0%</h3>
+                        <p class="text-muted mb-0 small">Overall Pass Rate</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="row g-4 mb-4">
+            <!-- Class Performance Trend -->
+            <div class="col-lg-8">
+                <div class="card card-pro">
+                    <div class="card-header-pro d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0 fw-bold">Performance Trend</h5>
+                        <select class="form-select form-select-sm w-auto" id="timeRangeSelect">
+                            <option value="30" selected>Last 30 Days</option>
+                        </select>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="classTrendChart" height="80"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Course Difficulty Analysis -->
+            <div class="col-lg-4">
+                <div class="card card-pro">
+                    <div class="card-header-pro">
+                        <h5 class="mb-0 fw-bold">Course Pass Rates</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="coursePassRateChart" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Course Statistics Table -->
+        <div class="card card-pro">
+            <div class="card-header-pro">
+                <h5 class="mb-0 fw-bold">Course Performance Breakdown</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="ps-4 py-3">Course Name</th>
+                                <th>Students Enrolled</th>
+                                <th>Quizzes Taken</th>
+                                <th>Average Score</th>
+                                <th>Pass Rate</th>
+                                <th>Difficulty</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="course : ${courseStats}">
+                                <td class="ps-4 fw-bold" th:text="${course.courseName}">Course Name</td>
+                                <td th:text="${course.studentsEnrolled}">25</td>
+                                <td th:text="${course.quizzesTaken}">45</td>
+                                <td>
+                                    <span class="fw-bold"
+                                        th:classappend="${course.avgScore >= 80} ? 'text-success' : (${course.avgScore >= 50} ? 'text-warning' : 'text-danger')"
+                                        th:text="${course.avgScore} + '%'">
+                                        75%
+                                    </span>
+                                </td>
+                                <td th:text="${course.passRate} + '%'">80%</td>
+                                <td>
+                                    <span th:if="${course.avgScore >= 80}" class="badge bg-success">Easy</span>
+                                    <span th:if="${course.avgScore >= 50 && course.avgScore < 80}"
+                                        class="badge bg-warning">Medium</span>
+                                    <span th:if="${course.avgScore < 50}" class="badge bg-danger">Hard</span>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(courseStats)}">
+                                <td colspan="6" class="text-center py-4 text-muted">
+                                    No course data available yet.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments/_footer :: footer}"></footer>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script th:inline="javascript">
+        // Reuse the same chart logic
+        const trendData = /*[[${trendData}]]*/[];
+        const trendLabels = trendData.map(d => d.date);
+        const trendScores = trendData.map(d => d.avgScore);
+        const trendQuizCount = trendData.map(d => d.quizCount);
+
+        const trendCtx = document.getElementById('classTrendChart');
+        if (trendCtx) {
+            new Chart(trendCtx, {
+                type: 'line',
+                data: {
+                    labels: trendLabels,
+                    datasets: [{
+                        label: 'Average Score',
+                        data: trendScores,
+                        borderColor: 'rgb(102, 126, 234)',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        yAxisID: 'y'
+                    }, {
+                        label: 'Quiz Count',
+                        data: trendQuizCount,
+                        borderColor: 'rgb(72, 187, 120)',
+                        backgroundColor: 'rgba(72, 187, 120, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        yAxisID: 'y1'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        legend: { position: 'top', labels: { padding: 15 } }
+                    },
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: { callback: function (value) { return value + '%'; } }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            beginAtZero: true,
+                            grid: { drawOnChartArea: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        const passRateData = /*[[${coursePassRateData}]]*/[];
+        const passRateLabels = passRateData.map(d => d.courseName);
+        const passRates = passRateData.map(d => d.passRate);
+
+        const passRateCtx = document.getElementById('coursePassRateChart');
+        if (passRateCtx) {
+            new Chart(passRateCtx, {
+                type: 'bar',
+                data: {
+                    labels: passRateLabels,
+                    datasets: [{
+                        label: 'Pass Rate',
+                        data: passRates,
+                        backgroundColor: passRates.map(rate =>
+                            rate >= 80 ? 'rgba(72, 187, 120, 0.8)' :
+                                rate >= 50 ? 'rgba(250, 112, 154, 0.8)' :
+                                    'rgba(252, 129, 129, 0.8)'
+                        ),
+                        borderRadius: 8,
+                        barThickness: 30
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: { legend: { display: false } },
+                    scales: { x: { beginAtZero: true, max: 100 } }
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>

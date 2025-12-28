@@ -46,7 +46,7 @@ public class CourseController {
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
     
-    // --- 1. VIEW: List Courses for Student ---
+    // List Courses for Student
     @GetMapping("/courses")
     public String listCourses(Model model, Authentication auth) {
         AppUser user = getCurrentUser(auth);
@@ -64,7 +64,7 @@ public class CourseController {
         return "student/courses"; 
     }
 
-    // --- 2. VIEW: Course Detail Page (Material & PDF) ---
+    // Course Detail Page
     @GetMapping("/course/{id}")
     public String viewCourseDetail(@PathVariable Long id, Model model, Authentication auth) {
         Course course = courseRepository.findById(id)
@@ -83,7 +83,7 @@ public class CourseController {
         return "student/course_detail";
     }
 
-    // --- 3. ADMIN: Create Course + RAG INGESTION ---
+    //Create Course + RAG INGESTION 
     @PostMapping("/course/save")
     public String saveCourse(@ModelAttribute Course course, 
                              @RequestParam("file") MultipartFile file) throws IOException {
@@ -102,7 +102,7 @@ public class CourseController {
         return "redirect:/courses";
     }
 
-    // --- 4. STUDENT: Download PDF ---
+    // STUDENT: Download PDF
     @GetMapping("/course/{id}/download")
     public ResponseEntity<ByteArrayResource> downloadPdf(@PathVariable Long id, Authentication auth) {
         Course course = courseRepository.findById(id).orElseThrow();
@@ -123,13 +123,12 @@ public class CourseController {
                 .body(new ByteArrayResource(course.getPdfFile()));
     }
 
-    // --- 5. STUDENT: View PDF inline (opens in browser/iframe) ---
     @GetMapping("/course/{id}/pdf")
     public ResponseEntity<ByteArrayResource> viewPdf(@PathVariable Long id, Authentication auth) {
         Course course = courseRepository.findById(id).orElseThrow();
         AppUser user = getCurrentUser(auth);
         
-        // Security check: Students can only view enrolled courses
+        // Students can only view enrolled courses
         // Teachers and admins can view all
         if (user.getRole() == Role.STUDENT && !user.getCourses().contains(course)) {
             return ResponseEntity.status(403).build();
@@ -149,7 +148,7 @@ public class CourseController {
                 .body(new ByteArrayResource(pdfData));
     }
 
-    // --- 6. STUDENT: Generate Quiz via AI AGENT ---
+    //Generate Quiz via AI AGENT
     @GetMapping("/course/{id}/quiz-data")
     @ResponseBody
     public String generateQuiz(@PathVariable Long id, @RequestParam Long studentId) {

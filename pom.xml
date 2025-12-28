@@ -14,7 +14,7 @@
         <relativePath/>
     </parent>
 
-    <!-- UPDATED GROUP ID to match your package (ensamai) -->
+    <!-- Our Package (ensamai) -->
     <groupId>com.ensamai</groupId>
     <artifactId>pedagogy-ai</artifactId>
     <version>0.0.1-SNAPSHOT</version>
@@ -23,7 +23,7 @@
 
     <properties>
         <java.version>17</java.version>
-        <spring-ai.version>1.0.0-M1</spring-ai.version> <!-- Safe stable version -->
+        <spring-ai.version>1.0.0-M1</spring-ai.version> 
     </properties>
 
     <!-- Spring AI BOM -->
@@ -76,11 +76,6 @@
             <artifactId>thymeleaf-extras-springsecurity6</artifactId>
         </dependency>
 
-        <!-- SPRING AI – GOOGLE GEMINI -->
-        <!-- Note: This starter requires a Google Cloud Project ID. 
-             If you only have an API Key, you might need to disable auto-config initially. -->
-        
-
         <!-- DEV TOOLS -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -110,7 +105,7 @@
 
     </dependencies>
 
-    <!-- REPOSITORIES (Crucial for Spring AI) -->
+    <!-- REPOSITORIES -->
     <repositories>
         <repository>
             <id>spring-milestones</id>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/_header :: header-head(title='Review Quiz')}"></head>
+<body>
+<nav th:replace="~{fragments/_header :: header-nav}"></nav>
+
+<div class="container py-5" style="max-width: 800px;">
+    
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold">Review AI Quiz</h2>
+            <p class="text-muted">Verify the generated questions before publishing.</p>
+        </div>
+        <a th:href="@{/admin/dashboard}" class="btn btn-light border btn-action">Discard & Exit</a>
+    </div>
+
+    <form th:action="@{/admin/course/{id}/save-quiz(id=${course.id})}" th:object="${quizForm}" method="post">
+        
+        <div th:each="question, itemStat : *{questions}" class="card card-pro mb-4">
+            <div class="card-header-pro py-3 bg-light d-flex justify-content-between">
+                <span class="fw-bold text-dark">Question <span th:text="${itemStat.count}">1</span></span>
+            </div>
+            <div class="card-body p-4">
+                
+                <div class="mb-3">
+                    <label class="form-label text-muted fw-bold small">QUESTION TEXT</label>
+                    <textarea class="form-control fw-bold" rows="2" 
+                              th:field="*{questions[__${itemStat.index}__].questionText}"></textarea>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <span class="input-group-text">A</span>
+                            <input type="text" class="form-control" th:field="*{questions[__${itemStat.index}__].optionA}">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <span class="input-group-text">B</span>
+                            <input type="text" class="form-control" th:field="*{questions[__${itemStat.index}__].optionB}">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <span class="input-group-text">C</span>
+                            <input type="text" class="form-control" th:field="*{questions[__${itemStat.index}__].optionC}">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <span class="input-group-text">D</span>
+                            <input type="text" class="form-control" th:field="*{questions[__${itemStat.index}__].optionD}">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 p-3 bg-success bg-opacity-10 border border-success rounded">
+                    <label class="form-label text-success fw-bold small mb-1">CORRECT ANSWER</label>
+                    <select class="form-select w-auto border-success" th:field="*{questions[__${itemStat.index}__].correctAnswer}">
+                        <option value="A">Option A</option>
+                        <option value="B">Option B</option>
+                        <option value="C">Option C</option>
+                        <option value="D">Option D</option>
+                    </select>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="d-grid gap-2 mb-5">
+            <button type="submit" class="btn btn-primary btn-lg btn-action justify-content-center shadow-sm">
+                <i class="bi bi-check-circle-fill"></i> Approve & Publish Quiz
+            </button>
+        </div>
+    </form>
+</div>
+
+<footer th:replace="~{fragments/_footer :: footer}"></footer>
+</body>
+</html>

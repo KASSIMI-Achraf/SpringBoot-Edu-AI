@@ -7,7 +7,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
-// FORCE Spring to look in these packages:
+
 @ComponentScan(basePackages = "com.ensamai.pedagogy")
 @EnableJpaRepositories(basePackages = "com.ensamai.pedagogy.repository")
 @EntityScan(basePackages = "com.ensamai.pedagogy.model")

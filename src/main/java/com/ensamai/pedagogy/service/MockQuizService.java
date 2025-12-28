@@ -7,14 +7,8 @@ import java.util.List;
 
 @Service
 public class MockQuizService {
-
-    /**
-     * Simulates the RAG + LLM process.
-     * In a real app, this would take the 'courseContent' and send it to an AI.
-     * Here, we just return hardcoded questions from the PDF.
-     */
     public List<QuizQuestion> generateQuiz(String courseContent) {
-        // We ignore the input text for now and return the static questions
+
         return Arrays.asList(
             new QuizQuestion(
                 1,
